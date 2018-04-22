@@ -12,7 +12,7 @@ class Application:
     def handle_request(self):
         status = '200 OK'
         output = Router.route_url(self.request_url)
-
+        
 
         response_headers = [('Content-type', 'text/plain'),
                             ('Content-Length', str(len(output)))]

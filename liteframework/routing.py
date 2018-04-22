@@ -1,14 +1,16 @@
+from liteframework.util import match_url
+
 class Router(object):
     routing_table = {}
 
     @staticmethod
     def route_url(url):
-        print url
-        if url in Router.routing_table:
-            action_function = Router.routing_table[url]
-            return action_function([])
-        else:
-            return 'Failed'
+        for key, action in Router.routing_table.iteritems():
+            result, variables = match_url(key, url)
+            if result:
+                print 'url {} matched route {}, variables={}'.format(url, key, variables)
+                return action(variables)
+        return 'Failed'
 
 
 def route(*args, **kwargs):
