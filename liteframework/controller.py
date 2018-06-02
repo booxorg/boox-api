@@ -65,8 +65,8 @@ class Controller(object):
 
     @staticmethod
     def view(name, pass_variables = {}):
-        template = Application.jinja_env.get_template('common.html')
-        response = template.render(page_name='main.html')
+        template = Application.jinja_env.get_template('%s.html' % (name))
+        response = template.render(**pass_variables)
         return (
             {
                 'Content-type' : 'text/html',

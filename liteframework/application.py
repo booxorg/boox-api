@@ -1,3 +1,14 @@
+####################################################################################
+####
+####    This static class holds the main information about the paths and environmental 
+####    variables. 
+####    It gets instantiated at the very start of the request, in the public/index.wsgi
+####    To use paths, env and start_response function - import this class
+####    from liteframework.application import Application
+####    and access members statically
+####    Application.public_path, Application.jinja_env
+####
+####################################################################################
 import os, sys
 from liteframework.util import url_reconstruction
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
