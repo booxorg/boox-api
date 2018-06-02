@@ -27,7 +27,6 @@ def match_url(template, actual_url):
         if variable.search(template):
             for m in re.finditer('({([^}]*::[^}]*)})', template):
                 #Match part before variable
-                print 'm1 {} m2 {}'.format(m.group(1), m.group(2))
                 before = template[:m.start(1)]
                 actual_before = actual_url[:len(before)]
                 if before != actual_before:
@@ -35,7 +34,6 @@ def match_url(template, actual_url):
                 actual_url = actual_url[len(before):]
                 template = template[len(before):]
 
-                print 'after strip {} // {}'.format(actual_url, template)
                 # Match actual variable
                 var = m.group(2)
                 var_name, var_regex = var.split('::')
