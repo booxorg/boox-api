@@ -1,5 +1,6 @@
 from urllib2 import quote 
 import re
+import posixpath
 
 def url_reconstruction(environ):
     url = ''
@@ -19,46 +20,41 @@ def url_reconstruction(environ):
 def match_url(template, actual_url):
     template = template.strip()
     actual_url = actual_url.strip()
-    template_parts = template.split('/')
-    actual_parts = actual_url.split('/')
-
-    #If number of segments doesn't match - return false right away
-    if len(template_parts) != len(actual_parts):
-        return (False, {})
 
     variables = {}
     variable = re.compile('{[^}]*::[^}]*}')
-    for template_part, actual_part in zip(template_parts, actual_parts):
-        if variable.search(template_part):
-            for m in re.finditer('([^{]*){([^}]*)}([^{}]*)', template_part):
+    while True:
+        if variable.search(template):
+            for m in re.finditer('({([^}]*::[^}]*)})', template):
                 #Match part before variable
-                before = m.group(1)
-                actual_before = actual_part[:len(before)]
+                print 'm1 {} m2 {}'.format(m.group(1), m.group(2))
+                before = template[:m.start(1)]
+                actual_before = actual_url[:len(before)]
                 if before != actual_before:
                     return (False, {})
-                actual_part = actual_part[len(before):]
+                actual_url = actual_url[len(before):]
+                template = template[len(before):]
 
+                print 'after strip {} // {}'.format(actual_url, template)
                 # Match actual variable
                 var = m.group(2)
                 var_name, var_regex = var.split('::')
-                match = re.match(var_regex, actual_part)
+                match = re.match(var_regex, actual_url)
                 if match:
-                    actual_part = actual_part[match.span()[1]:]
+                    actual_url = actual_url[match.span()[1]:]
+                    template = template[len(m.group(1)):]
                 else:
                     return (False, {})
 
-                # Match part after variable
-                after = m.group(3)
-                actual_after = actual_part[:len(after)]
-                if after != actual_after:
-                    return (False, {})
-
-                actual_part = actual_part[len(after):]
                 variables[var_name] = match.group()
-            if actual_part != '':
-                return (False, {})
         else:
-            if template_part != actual_part:
+            if template != actual_url:
                 return (False, {})
+            else:
+                break
+
+        if actual_url != '':
+            return (False, {})
             
     return (True, variables)   
+  
