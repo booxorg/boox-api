@@ -10,6 +10,8 @@ import liteframework.util as Util
 import liteframework.routing as Routing
 import liteframework.post as Post
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
+
+# Import user defined routes
 from app.controllers import *
 
 # Import all the default global functions
