@@ -10,8 +10,8 @@ import liteframework.util as Util
 import liteframework.routing as Routing
 import liteframework.post as Post
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
-# Load all the user defined routes
-from app.routes import *
+from app.controllers import *
+
 # Import all the default global functions
 from liteframework.global_functions import *
 
@@ -43,8 +43,9 @@ def application(environ, start_response):
     App.jinja_env.globals.update(**App.global_functions)
     # Globals init finish
 
-    request = Routing.Request()
+    
     # Request build
+    request = Routing.Request()
     request.port = environ.get('SERVER_PORT', 80)
     request.method = environ.get('REQUEST_METHOD', 'GET')
     request.protocol = environ.get('SERVER_PROTOCOL', 'http')
@@ -58,6 +59,9 @@ def application(environ, start_response):
     request.input = Post.get_post_form(environ)
     request.url = App.request_url
     # Request build finish
+
+    # Load user defined routes
+
 
     return Routing.handle_request(request)
 

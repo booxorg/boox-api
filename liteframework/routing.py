@@ -40,7 +40,7 @@ def Route(*args, **kwargs):
             new_route.method = 'GET' if 'method' not in kwargs else kwargs['method']
             new_route.action = action_method
             App.routing_table[kwargs['url']] = copy.deepcopy(new_route)
-
+        print('Route reclared!')
         return wrapper
     return decorator
 

@@ -8,7 +8,7 @@ import liteframework.application as App
 ### the mimetype if it's not specified by the user
 ###
 ########################################################
-def response(response_data, response_mimetype=None):
+def response_data(response_data, response_mimetype=None):
     if response_mimetype == None:
         response_mimetype = magic.from_buffer(response_data, mime = True)
     return (
@@ -17,20 +17,6 @@ def response(response_data, response_mimetype=None):
             'Content-Length' : str(len(response_data))
         },
         response_data.encode('utf-8'),
-        '200 OK'
-    )
-
-
-def resource(resource_data, resource_mimetype=None):
-    if resource_mimetype == None:
-        resource_mimetype = magic.from_buffer(resource_data, mime = True)
-
-    return (
-        {
-            'Content-type' : resource_mimetype,
-            'Content-Length' : str(len(resource_data))
-        },
-        resource_data.encode('utf-8'),
         '200 OK'
     )
 
@@ -67,7 +53,7 @@ def response_not_found():
     )
 
 
-def view(name, pass_variables = {}):
+def response_view(name, pass_variables = {}):
     template = App.jinja_env.get_template(name)
     response = template.render(**pass_variables)
     return (
