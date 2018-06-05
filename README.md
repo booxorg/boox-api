@@ -53,7 +53,7 @@ request.request_scheme
 After the `Application` and `Request` have been initialized, the `Router` takes control.
 It will iterate through all the defined routes (the function `route_url` inside `liteframework/routing.py`) and will try to match one of them. After it succeeds, the subsequent controller method will be called.
 ### Declaring a route
-Routes are declared inside `app/controllers` folder. All the related or dependent routes should be placed in the same controller. The route `register` and `register_post` might be placed together in `register_controller.py`. This is the convention, but there is not limits to the number or naming of the controllers as they all are imported by the application.
+Routes are declared inside `app/controllers` folder. All the related or dependent routes should be placed in the same controller. The route `register` and `register_post` might be placed together in `register_controller.py`. This is the convention, but there are not limits to the number or naming of the controllers as they all are imported by the application.
 _Obviously, all the files in the `controllers` folder _must_ have controller functionality_
 ```
 import liteframework.controller as Controller 
@@ -73,3 +73,18 @@ The decorator `Routing.Route` binds the given url template to the declared funct
 | method | `GET`, `POST`, `PUT`, `DELETE` may be used, only the matching requests will be redirected to the function | String |
 | middleware | (_In development_) Contains the list with names of the middleware to be called before the function, but after the match | List |
 
+#### Template format
+A template should be _relative_, from the root, for example `/main`, `/user/id`, `/profile`
+Optionally, a template allows variables in the following format `{{<variable_name>::<variable_regex>}}`
+1. `<variable_name>` is how it will be named and passed along to the controller, for example `user_id`, `page_id`, etc.
+2. `<variable_regex>` is the python regex that should match the variable, for example `\d\d` will match two digits, `[A-Z]{1, 5}` will match a string containing letters from A to Z from 1 to max 5 times.
+
+Some variable examples are 
+1. `{{name::[A-Za-z]+}}`
+2. `{{id::[0-9]+}}`
+
+A template can contain an indefinite number of variables with **unique** names.
+1. `/user/{{id::[0-9]{10}}}/profile`
+2. `/product/{{name::[A-Za-z_-]+}}`
+
+**All the variables will be passed along to the controller in the `variables` dictionary having their names as keys.**
