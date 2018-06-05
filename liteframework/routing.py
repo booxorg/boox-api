@@ -10,6 +10,7 @@ class RouteObject:
         self.action = None
         self.method = None
         self.middleware = None
+        self.disabled = False
 
 class Request:
     def __init__(self):
@@ -39,6 +40,7 @@ def Route(*args, **kwargs):
             new_route.template = kwargs['url']
             new_route.method = 'GET' if 'method' not in kwargs else kwargs['method']
             new_route.action = action_method
+            new_route.disabled = False if 'disabled' not in kwargs else kwargs['disabled']
             App.routing_table[kwargs['url']] = copy.deepcopy(new_route)
         print('Route reclared!')
         return wrapper
@@ -47,7 +49,7 @@ def Route(*args, **kwargs):
 
 def route_url(request):
     for template, route in App.routing_table.iteritems():
-        if request.method == route.method:
+        if request.method == route.method and route.disabled == False:
             result, variables = Util.match_url(template, request.url)
             if result:
                 print 'url {} matched route {}, variables={}'.format(request.url, template, variables)

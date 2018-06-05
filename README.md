@@ -72,6 +72,7 @@ The decorator `Routing.Route` binds the given url template to the declared funct
 | url | The template url to be matched, has a specific format which is described below | String |
 | method | `GET`, `POST`, `PUT`, `DELETE` may be used, only the matching requests will be redirected to the function | String |
 | middleware | (_In development_) Contains the list with names of the middleware to be called before the function, but after the match | List |
+| disabled | Boolean value that activates/deactivates the route | Boolean |
 
 #### Template format
 A template should be _relative_, from the root, for example `/main`, `/user/id`, `/profile`
@@ -91,7 +92,11 @@ A template can contain an indefinite number of variables with **unique** names.
 
 
 ### Installation
+
 `sudo apt-get update`
+
 `sudo apt-get install apache2 apache2-utils libexpat1 ssl-cert python`
+
 `sudo apt-get install libapache2-mod-wsgi`
+
 `sudo /etc/init.d/apache2 restart`
