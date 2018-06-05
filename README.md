@@ -88,3 +88,10 @@ A template can contain an indefinite number of variables with **unique** names.
 2. `/product/{{name::[A-Za-z_-]+}}`
 
 **All the variables will be passed along to the controller in the `variables` dictionary having their names as keys.**
+
+
+### Installation
+`sudo apt-get update`
+`sudo apt-get install apache2 apache2-utils libexpat1 ssl-cert python`
+`sudo apt-get install libapache2-mod-wsgi`
+`sudo /etc/init.d/apache2 restart`
