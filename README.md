@@ -51,3 +51,25 @@ request.request_scheme
 
 # What happens next
 After the `Application` and `Request` have been initialized, the `Router` takes control.
+It will iterate through all the defined routes (the function `route_url` inside `liteframework/routing.py`) and will try to match one of them. After it succeeds, the subsequent controller method will be called.
+### Declaring a route
+Routes are declared inside `app/controllers` folder. All the related or dependent routes should be placed in the same controller. The route `register` and `register_post` might be placed together in `register_controller.py`. This is the convention, but there is not limits to the number or naming of the controllers as they all are imported by the application.
+_Obviously, all the files in the `controllers` folder _must_ have controller functionality_
+```
+import liteframework.controller as Controller 
+import liteframework.routing as Routing 
+
+@Routing.Route(url='/', method='GET')
+def index(variables={}, request={}):
+    return Controller.response_data('This is a test route')
+```
+The decorator `Routing.Route` binds the given url template to the declared function. As soon as any request matches the template - the given function will be called.
+
+#### Routing.Route params
+
+| Name | Description | Type |
+|------|-------------|------|
+| url | The template url to be matched, has a specific format which is described below | String |
+| method | `GET`, `POST`, `PUT`, `DELETE` may be used, only the matching requests will be redirected to the function | String |
+| middleware | (_In development_) Contains the list with names of the middleware to be called before the function, but after the match | List |
+
