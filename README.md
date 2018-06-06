@@ -102,8 +102,13 @@ name = Cookies.get_cookie(request, 'name', 'Unknown name')
 ```
 The framework supports a very primitive version of cookies.
 They are encrypted with `1024 bit RSA` and stored in the user's browser for 30 days but default or for  `expires_after_days`.
-The encryption keys are genereated an stored as `/storage/keys/cookie_private.pem` and `/storage/keys/cookie_public.pem`
-The current cookie options are 
+The encryption keys are genereated an stored as `/storage/keys/cookie_private.pem` and `/storage/keys/cookie_public.pem`.
+1. When the user sends an request, the script checks for the existence of the header `HTTP-COOKIE`, which will be parsed and
+kept in `request.cookies` internal object. 
+2. When the user asks for a cookie, its value is extracted from the object and decrypted with the private key.
+3. When the user stores a cookie, it gets encrypted with the public key and saved in `request.new_cookies` and then added to the response as a `Set-Cookie` header 
+
+The current cookie functions are 
 
 #### set_cookie
 
