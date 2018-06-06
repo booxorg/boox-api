@@ -1,6 +1,9 @@
 # liteframework
 A POC Python Web Framework following MVC principles
 
+## Disclaimer 
+This is a POC Framework that doesn't in any way claim to be secure or correct. It does not and will never guarantee compatibility or reliability and exists purely for educational purposes.
+
 ## General description
 Everything starts with Apache receiving a request. `mod_wsgi` executes `index.wsgi` located in the public directory, passing variables `environ` and `start_response` to a function called `application` (defined by the standard [PEP 3333](https://www.python.org/dev/peps/pep-0333/)).
 * The `environ` dictionary contains all the information about the request such as `SERVER_PORT`, `REQUEST_METHOD`, `SERVER_PROTOCOL`, `CONTENT_LENGTH`, `HTTP_USER_AGENT` and others.
@@ -90,6 +93,36 @@ A template can contain an indefinite number of variables with **unique** names.
 
 **All the variables will be passed along to the controller in the `variables` dictionary having their names as keys.**
 
+
+### Cookies
+```
+import liteframework.cookies as Cookies
+Cookies.set_cookie(request, 'name', 'John Doe', expires_after_days=60)
+name = Cookies.get_cookie(request, 'name', 'Unknown name')
+```
+The framework supports a very primitive version of cookies.
+They are encrypted with `1024 bit RSA` and stored in the user's browser for 30 days but default or for  `expires_after_days`.
+The encryption keys are genereated an stored as `/storage/keys/cookie_private.pem` and `/storage/keys/cookie_public.pem`
+The current cookie options are 
+
+#### set_cookie
+
+| Name | Description |
+|------|-------------|
+| request               | _Mandatory parameter_, the received request object |
+| key                   | _Mandatory parameter_ The cookie name |
+| value                 | _Mandatory parameter_ The cookie value (will be encrypted) |
+| path                  | Cookie path    |
+| expires_after_days    | Number of days for the cookie to live |
+| domain                | Cookie domain |
+
+#### get_cookie
+
+| Name | Description |
+|------|-------------|
+| request               | _Mandatory parameter_, the received request object |
+| key                   | _Mandatory parameter_ The cookie name |
+| default               | _Mandatory parameter_ The cookie default value if it's not found |
 
 ### Installation
 

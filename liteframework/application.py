@@ -16,9 +16,13 @@ base_path = None
 public_path = None
 app_path = None
 resources_path = None
+storage_path = None
 views_path = None
 global_functions = {}
 jinja_env = None
 routing_table = {}
-
+cookies = None
+new_cookies = None
+cookies_pub = None
+cookies_prv = None
 

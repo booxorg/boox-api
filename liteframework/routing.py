@@ -26,6 +26,8 @@ class Request:
         self.method = None
         self.url = None
         self.input = None    
+        self.cookies = None
+        self.new_cookies = None
 
     def get(self, key, default):
         pass
@@ -43,7 +45,6 @@ def Route(*args, **kwargs):
             new_route.disabled = False if 'disabled' not in kwargs else kwargs['disabled']
             if not new_route.disabled:
                 App.routing_table[kwargs['url']] = copy.deepcopy(new_route)
-        print('Route reclared!')
         return wrapper
     return decorator
 
@@ -60,6 +61,9 @@ def route_url(request):
 def handle_request(request):
     output, content, status = route_url(request)
     response_headers = output.items()
+
+    for cookie in request.new_cookies.values():
+        response_headers.append(('Set-Cookie', cookie.OutputString()))
     App.start_response(status, response_headers)
     return content
 

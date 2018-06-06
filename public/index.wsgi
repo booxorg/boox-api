@@ -9,7 +9,9 @@ import liteframework.application as App
 import liteframework.util as Util
 import liteframework.routing as Routing
 import liteframework.post as Post
+import liteframework.encryption as Encryption
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
+from Cookie import SimpleCookie
 
 # Import user defined routes
 from app.controllers import *
@@ -36,6 +38,7 @@ def application(environ, start_response):
     App.base_path = os.path.realpath(path)
     App.public_path = os.path.join(App.base_path, 'public')
     App.resources_path = os.path.join(App.base_path, 'resources')
+    App.storage_path = os.path.join(App.base_path, 'storage')
     App.views_path = os.path.join(App.base_path, 'resources', 'views')
     App.app_path = os.path.join(App.base_path, 'app')
     App.jinja_env = Environment(
@@ -43,6 +46,7 @@ def application(environ, start_response):
         autoescape=select_autoescape(['html', 'xml'])
     )
     App.jinja_env.globals.update(**App.global_functions)
+    App.cookies_pub, App.cookies_prv = Encryption.import_key('cookie')
     # Globals init finish
 
     
@@ -60,10 +64,13 @@ def application(environ, start_response):
     request.accept_encoding = environ.get('HTTP_ACCEPT_ENCODING', 'compress')
     request.input = Post.get_post_form(environ)
     request.url = App.request_url
+    request.new_cookies = SimpleCookie()
+    request.cookies = SimpleCookie()
+    if 'HTTP_COOKIE' in environ:
+        request.cookies.load(environ['HTTP_COOKIE'])
     # Request build finish
 
     # Load user defined routes
-
 
     return Routing.handle_request(request)
 
