@@ -34,3 +34,7 @@ def get_cookie(request, key, default=None):
         value = request.cookies[key].value
         decrypted = Encryption.decrypt(value, App.cookies_prv)
         return decrypted
+
+def delete_cookie(request, key):
+    request.new_cookies[key] = ''
+    request.new_cookies[key]['expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'

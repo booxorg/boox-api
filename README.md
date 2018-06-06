@@ -129,6 +129,14 @@ The current cookie functions are
 | key                   | _Mandatory parameter_ The cookie name |
 | default               | _Mandatory parameter_ The cookie default value if it's not found |
 
+#### delete_cookie
+Will invalidate the cookie by setting expire date to past
+
+| Name | Description |
+|------|-------------|
+| request               | _Mandatory parameter_, the received request object |
+| key                   | _Mandatory parameter_ The cookie name |
+
 ### Installation
 
 `sudo apt-get update`

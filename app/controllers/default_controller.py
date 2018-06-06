@@ -44,7 +44,6 @@ def index(variables={}, request={}):
 
     number = int(Cookie.get_cookie(request, 'doge', 0))
     Cookie.set_cookie(request, 'doge', str(number+1), expires_after_days=60)
-
     pass_variables = {
         'name' : 'liteframework', 
         'info' : lines,
