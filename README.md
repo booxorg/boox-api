@@ -139,10 +139,34 @@ Will invalidate the cookie by setting expire date to past
 
 ### Installation
 
-`sudo apt-get update`
+1. `sudo apt-get update`
 
+2. Install apache
 `sudo apt-get install apache2 apache2-utils libexpat1 ssl-cert python`
 
+3. Install mod-wsgi
 `sudo apt-get install libapache2-mod-wsgi`
 
+4. Restart apache
 `sudo /etc/init.d/apache2 restart`
+
+5. Add the config (with a proper name, and chaning all the names in the conf)
+`cp docs/config/000-default.conf /etc/apache2/sites-available/project.conf`
+
+6. Enable the site
+`sudo a2ensite project.conf`
+
+7. Reload apache
+`sudo service apache2 reload`
+
+8. Install mysql
+
+    ```
+    sudo apt-get install mysql-server
+    sudo apt-get install python-pip python-dev libmysqlclient-dev
+    sudo pip install MySQL-python
+    ```
+
+9. Create the database and tables
+
+10. Enjoy
