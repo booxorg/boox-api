@@ -151,7 +151,7 @@ Will invalidate the cookie by setting expire date to past
 `sudo /etc/init.d/apache2 restart`
 
 5. Add the config (with a proper name, and chaning all the names in the conf)
-`cp docs/config/000-default.conf /etc/apache2/sites-available/project.conf`
+`cp docs/defaults/000-default.conf /etc/apache2/sites-available/project.conf`
 
 6. Enable the site
 `sudo a2ensite project.conf`
@@ -169,4 +169,6 @@ Will invalidate the cookie by setting expire date to past
 
 9. Create the database and tables
 
-10. Enjoy
+10. Copy the default `docs/defaults/config.ini` to the root and change all the necessary variables 
+ 
+11. Enjoy
