@@ -3,7 +3,7 @@ import liteframework.controller as Controller
 import liteframework.routing as Routing 
 import liteframework.cookie as Cookie
 
-@Routing.Route(url='/', method='GET')
+@Routing.Route(url='/', method='GET', disabled=True)
 def index(variables={}, request={}):
     lines = r'''
                __.                                              
