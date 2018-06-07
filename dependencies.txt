@@ -1,0 +1,4 @@
+python-magic https://github.com/ahupp/python-magic
+jinja2 http://jinja.pocoo.org/docs/2.10/
+pycrypto https://pypi.org/project/pycrypto/
+configparser https://docs.python.org/3/library/configparser.html
