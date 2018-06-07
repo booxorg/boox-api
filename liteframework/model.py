@@ -11,6 +11,7 @@ class Model:
 		cursor = dbConnection.cursor()
 		return cursor
 
+	#Creates a SELECT query. If * is provided, it searches and replaces * with all the table's columns
 	def createSelectQuery(self, *columnNames):
 		self.query = "SELECT ";
 
@@ -30,6 +31,7 @@ class Model:
 		
 		return self
 
+	#Adds a where clause
 	def where(self, columnName, operator, value):
 		if(isinstance(value, basestring)):
 			self.query = "%s WHERE %s %s \"%s\"" % (self.query, columnName, operator, value)
@@ -37,6 +39,7 @@ class Model:
 			self.query = "%s WHERE %s %s %s" % (self.query, columnName, operator, str(value))
 		return self
 
+	#Adds an AND or OR condition to the query
 	def addCondition(self, conditionType, columnName, operator, value):
 		if(isinstance(value, basestring)):
 			self.query = "%s %s %s %s \"%s\"" % (self.query, conditionType, columnName, operator, value)
@@ -44,15 +47,18 @@ class Model:
 			self.query = "%s %s %s %s %s" % (self.query, conditionType, columnName, operator, str(value))
 		return self
 
+	#Adds a join, keyFirstTable is the key from the tableName table 
 	def addJoin(self, keyFirstTable, keySecondTable, joinTableName):
 		self.query = "%s INNER JOIN %s ON %s.%s = %s.%s" % \
 					 (self.query, joinTableName, self.tableName, keyFirstTable, joinTableName, keySecondTable)
 		return self
 
+	#Sorts the values based on sortKey. sortType can be ASC, DESC
 	def addSort(self, sortType, sortKey):
 		self.query = "%s ORDER BY %s %s" % (self.query, sortKey, sortType)
 		return self
 
+	#Inserts a line into the table. You must provide a dictionary in the following format {column_name : value, ...}
 	def insertInfo(self, dictInfo):
 		self.query = "INSERT INTO %s (" % (self.tableName)
 		for key in dictInfo:
@@ -72,6 +78,7 @@ class Model:
 		cursor.execute(self.query)
 		cursor.execute("COMMIT;")
 
+	#Creates an update query. It can be used in combination with where. 
 	def createUpdateQuery(self, dictInfo):
 		self.query = "UPDATE %s SET " % (self.tableName)
 		for key in dictInfo:
@@ -83,15 +90,18 @@ class Model:
 		self.query = self.query[:-2]
 		return self
 
+	#Creates a delete query. It can be used in combination with where.
 	def createDeleteQuery(self):
 		self.query = "DELETE FROM %s " % (self.tableName)
 		return self
 
+	#Used for executing the query after creating an update or delete query
 	def executeQuery(self):
 		cursor = self.getConnectionCursor()
 		cursor.execute(self.query)
 		cursor.execute("COMMIT;")
 
+	#Returns the result of a query as a dictionary {column_name : value, ...}. Must be used only with createSelectQuery
 	def getResult(self):
 		cursor = self.getConnectionCursor()
 		cursor.execute(self.query)
@@ -108,4 +118,15 @@ class Model:
 		
 		return dictList	
 
+"""
+Examples: 
 
+suppose we have the class User which is a subclass of Model and has tableName set to "USERS"
+
+obj = User()
+result = obj.createSelectQuery("USERNAME", "PASSWORD").where("ID", ">", "2").getResult()
+
+obj.insertInfo({"USERNAME" : "armando", "PASSWORD" : "fuego"})
+obj.createUpdateQuery(*your dict here*).where(*your condition here*).executeQuery()
+obj.createDeleteQuery().where(*your condition here*).executeQuery()
+"""
