@@ -2,6 +2,7 @@
 import liteframework.controller as Controller 
 import liteframework.routing as Routing 
 import liteframework.cookie as Cookie
+import app.models.user as User
 
 @Routing.Route(url='/', method='GET')
 def index(variables={}, request={}):
@@ -44,12 +45,13 @@ def index(variables={}, request={}):
 
     number = int(Cookie.get_cookie(request, 'doge', 0))
     Cookie.set_cookie(request, 'doge', str(number+1), expires_after_days=60)
+
     pass_variables = {
         'name' : 'liteframework', 
         'info' : lines,
-        'number' : number+1
+        'number' : number+1,
         #list(map(lambda line: line.encode('utf8'), lines))
     }
 
-
+    
     return Controller.response_view('default.html', pass_variables)

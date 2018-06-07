@@ -12,6 +12,7 @@ import liteframework.post as Post
 import liteframework.encryption as Encryption
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
 from Cookie import SimpleCookie
+import ConfigParser
 
 # Import user defined routes
 from app.controllers import *
@@ -47,6 +48,8 @@ def application(environ, start_response):
     )
     App.jinja_env.globals.update(**App.global_functions)
     App.cookies_pub, App.cookies_prv = Encryption.import_key('cookie')
+    App.config = ConfigParser.ConfigParser()
+    App.config.read(os.path.join(App.base_path, 'config.ini'))
     # Globals init finish
 
     
