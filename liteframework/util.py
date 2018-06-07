@@ -14,6 +14,7 @@ def url_reconstruction(environ):
 
 
 def match_url(template, actual_url):
+    print template, actual_url
     template = template.strip()
     actual_url = actual_url.strip()
 

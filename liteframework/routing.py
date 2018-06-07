@@ -28,6 +28,8 @@ class Request:
         self.input = None    
         self.cookies = None
         self.new_cookies = None
+        self.params = None
+        self.url_no_params = None
 
     def get(self, key, default):
         pass
@@ -52,9 +54,12 @@ def Route(*args, **kwargs):
 def route_url(request):
     for template, route in App.routing_table.iteritems():
         if request.method == route.method and route.disabled == False:
-            result, variables = Util.match_url(template, request.url)
+            result, variables = Util.match_url(template, request.url_no_params)
             if result:
                 print 'url {} matched route {}, variables={}'.format(request.url, template, variables)
+                if request.params:
+                    for (key, value) in request.params.items():
+                        variables.update({key: value[0]})
                 return route.action(request=request, variables=variables)
     return Controller.response_not_found()
 

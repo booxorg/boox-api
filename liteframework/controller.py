@@ -21,7 +21,7 @@ def response_data(response_data, response_mimetype=None):
     )
 
 
-def response_file(resource_url, resource_mimetype=None):
+def response_file(resource_url, response_mimetype=None):
     if resource_mimetype == None:
         resource_mimetype = magic.from_file(resource_url, mime = True)
     

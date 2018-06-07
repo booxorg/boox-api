@@ -13,6 +13,7 @@ import liteframework.encryption as Encryption
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
 from Cookie import SimpleCookie
 import ConfigParser
+import urlparse
 
 # Import user defined routes
 from app.controllers import *
@@ -71,6 +72,8 @@ def application(environ, start_response):
     request.cookies = SimpleCookie()
     if 'HTTP_COOKIE' in environ:
         request.cookies.load(environ['HTTP_COOKIE'])
+    request.params = urlparse.parse_qs(urlparse.urlparse(request.url).query)
+    request.url_no_params = urlparse.urljoin(request.url, urlparse.urlparse(request.url).path)
     # Request build finish
 
     # Load user defined routes
