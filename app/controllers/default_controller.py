@@ -2,7 +2,6 @@
 import liteframework.controller as Controller 
 import liteframework.routing as Routing 
 import liteframework.cookie as Cookie
-import app.models.user as User
 
 @Routing.Route(url='/', method='GET')
 def index(variables={}, request={}):
