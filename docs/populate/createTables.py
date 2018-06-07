@@ -8,7 +8,7 @@ cursor = dbConnection.cursor()
 query = """CREATE TABLE USERS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   USERNAME VARCHAR(20),
-		   PASSWORD VARCHAR(64),
+		   PASSWORD VARCHAR(60),
 		   SALT VARCHAR(20),
 		   FIRSTNAME VARCHAR(30),
 		   LASTNAME VARCHAR(30),
@@ -19,17 +19,17 @@ query = """CREATE TABLE USERS (
 cursor.execute(query)
 
 query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("armandosexyguy", "A9CC9E492AC95B5AEFD056DD21B5536ED8163D5D4EAE9C3C88D46F7F0614E4F4",
+		   VALUES("armandosexyguy", "$2a$12$WlxpMD6KfeoGsEydwX9v9enmm3sMCApDTyh9U90aGc14bd.Ge4wAy",
 		   		  "kDH1rR6yc5UR8ZYkLxru", "Armando", "Ghedon", "garmando@gmail.com", 0)""" #password is password
 cursor.execute(query)
 
 query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("proteinmuscleman29", "B08229EEF70F0ECD04EC96F65D68C732C0CD1DFBEE26834697B7ADD19E965571",
+		   VALUES("proteinmuscleman29", "$2a$12$cXf7sWJ3xWawYaQxoxOsieR7EMAY7L88r1OpL7hms7JTd4sDxINBC",
 		   		  "fMYY63TGYOvJI7Gr3Ux9", "Muscolo", "Mister", "mmuscolo@gmail.com", 0)""" #password is prafuri
 cursor.execute(query)
 
 query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("ladiesman69", "A6B2DF7C1FA92961FA54AE5188C548E3D3C7B0B28A9DC9D8576D5545C8BA9347",
+		   VALUES("ladiesman69", "$2a$12$8os/YludCoo490dlDagUkeobuhTL9FarclztgGKeIaC2/l/0ua.Ye",
 		   		  "jPN3kqtLoGNYKU70stib", "Casanova", "Amantu", "gigolou@gmail.com", 0)""" #password is boner
 cursor.execute(query)
 
