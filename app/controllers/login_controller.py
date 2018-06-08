@@ -24,7 +24,7 @@ def register(variables={}, request={}):
         response_dict_pass = user.query("PASSWORD", "SALT").where("USERNAME", "=", username).condition("OR", "EMAIL", "=", username).get()
         input_pass_hash = bcrypt.hashpw(password.encode('utf8'), response_dict_pass[0]["SALT"])
 
-        if(input_pass_hash != response_dict_pass[0]["PASSWORD"]):
+        if input_pass_hash != response_dict_pass[0]["PASSWORD"]:
             message = 'incorrect username or password'
             status = 'error'
         else:
@@ -33,7 +33,7 @@ def register(variables={}, request={}):
             message = 'log in successful'
             status = 'success'
 
-    if(status == 'success'):
+    if status == 'success':
         response = { 'token' : response_dict_token[0]['TOKEN'] }
         result = {
             'status' : status,
@@ -46,5 +46,5 @@ def register(variables={}, request={}):
             'message' : message
         }
 
-    return Controller.response_data(json.dumps(result), response_mimetype='text/json')
+    return Controller.response_json(result)
     

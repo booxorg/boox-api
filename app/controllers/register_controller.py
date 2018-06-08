@@ -20,13 +20,14 @@ def register(variables={}, request={}):
     email = request.params['email']
 
     user = User.User()
+    token = Token.Token()
     response_dict_list = user.query("ID").where("USERNAME", "=", username).condition("OR", "EMAIL", "=", email).get()
     if not response_dict_list:
         if(password != cpassword):
             message = 'passwords do not match'
             status = 'error'
         else:
-            token = strgen.StringGenerator("[\w\d]{20}").render()
+            generated_token = strgen.StringGenerator("[\w\d]{20}").render()
             salt = bcrypt.gensalt()
             password_hash = bcrypt.hashpw(password.encode('utf8'), salt)
             insert_user_dict = {
@@ -40,12 +41,12 @@ def register(variables={}, request={}):
             response_dict_list = user.query("ID").where("USERNAME", "=", username).get()
             print response_dict_list
 
-            """insert_token_dict = {
-                                    "USERID" : response_dict_list[0]["ID"], 
-                                    "TOKENTYPE" : "booxtoken",
-                                    "TOKEN" : token
-                                }
-            user.insert(insert_token_dict)"""
+            insert_token_dict = {
+                "USERID" : response_dict_list[0]["ID"], 
+                "TOKENTYPE" : "booxtoken",
+                "TOKEN" : generated_token
+            }
+            token.insert(insert_token_dict)
 
             message = 'user registered successfully'
     else:
