@@ -1,7 +1,7 @@
 import MySQLdb
 
 
-dbConnection = MySQLdb.connect("localhost", "root", "pass", "boox")
+dbConnection = MySQLdb.connect("localhost", "root", "root", "boox")
 cursor = dbConnection.cursor()
 
 
