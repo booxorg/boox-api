@@ -1,4 +1,5 @@
 import magic
+import json
 import liteframework.application as App
 
 ########################################################
@@ -20,6 +21,16 @@ def response_data(response_data, response_mimetype=None):
         '200 OK'
     )
 
+def response_json(response_data):
+    result = json.dumps(response_data)
+    return (
+        {
+            'Content-Type' : 'text/json',
+            'Content-Length' : str(len(result))
+        },
+        result.encode('utf-8'),
+        '200 OK'
+    )
 
 def response_file(resource_url, response_mimetype=None):
     if resource_mimetype == None:

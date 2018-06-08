@@ -1,9 +1,10 @@
 import liteframework.controller as Controller 
 import liteframework.routing as Routing 
 import liteframework.cookie as Cookie
+import liteframework.middleware.params as Params
 import json
 
-@Routing.Route(url='/book/{book_id::\d+}', method='GET')
+@Routing.Route(url='/book/{book_id::\d+}', method='GET', middleware=[Params.has_params('token')])
 def get_book(variables={}, request={}):
     status = 'success'
     message = ''
@@ -24,4 +25,4 @@ def get_book(variables={}, request={}):
         'message' : message,
         'result' : values
     }
-    return Controller.response_data(json.dumps(result), response_mimetype='text/json')
+    return Controller.response_json(result)
