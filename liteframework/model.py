@@ -17,9 +17,9 @@ class Model:
 		self.__db_address = App.config.get('DATABASE', 'db_address')
 
 	def __del__(self):
-		if db_connection:
-			db_connection.commit()
-			db_connection.close()
+		if self.db_connection:
+			self.db_connection.commit()
+			self.db_connection.close()
 
 	def __get_connection_cursor(self):
 		if not self.db_connection:
