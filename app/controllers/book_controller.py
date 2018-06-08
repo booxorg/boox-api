@@ -15,7 +15,7 @@ def get_book(variables={}, request={}):
     else:
         message = 'book returned'
         values = {
-            'token' : request.params['token'][0],
+            'token' : request.params['token'],
             'book_id' : variables['book_id']
         }
 

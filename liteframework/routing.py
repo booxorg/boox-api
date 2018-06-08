@@ -57,9 +57,6 @@ def route_url(request):
             result, variables = Util.match_url(route.template, request.url_no_params)
             if result:
                 print 'url {} matched route {}, variables={}'.format(request.url, route.template, variables)
-                if request.params:
-                    for (key, value) in request.params.items():
-                        variables.update({key: value[0]})
                 return route.action(request=request, variables=variables)
     return Controller.response_not_found()
 
