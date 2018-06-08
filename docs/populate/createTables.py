@@ -4,12 +4,32 @@ import MySQLdb
 dbConnection = MySQLdb.connect("localhost", "root", "root", "boox")
 cursor = dbConnection.cursor()
 
+query = """DROP TABLE USERS;"""
+cursor.execute(query)
+query = """DROP TABLE LOCATIONS;"""
+cursor.execute(query)
+query = """DROP TABLE PREFERENCES;"""
+cursor.execute(query)
+query = """DROP TABLE BOOKS;"""
+cursor.execute(query)
+query = """DROP TABLE AUTHORS;"""
+cursor.execute(query)
+query = """DROP TABLE USERBOOKS;"""
+cursor.execute(query)
+query = """DROP TABLE COVERS;"""
+cursor.execute(query)
+query = """DROP TABLE HISTORY;"""
+cursor.execute(query)
+query = """DROP TABLE EXCHANGES;"""
+cursor.execute(query)
+query = """DROP TABLE TOKENS;"""
+cursor.execute(query)
 
 query = """CREATE TABLE USERS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   USERNAME VARCHAR(20),
 		   PASSWORD VARCHAR(60),
-		   SALT VARCHAR(20),
+		   SALT VARCHAR(29),
 		   FIRSTNAME VARCHAR(30),
 		   LASTNAME VARCHAR(30),
 		   EMAIL VARCHAR(30),
@@ -19,18 +39,18 @@ query = """CREATE TABLE USERS (
 cursor.execute(query)
 
 query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("armandosexyguy", "$2a$12$WlxpMD6KfeoGsEydwX9v9enmm3sMCApDTyh9U90aGc14bd.Ge4wAy",
-		   		  "kDH1rR6yc5UR8ZYkLxru", "Armando", "Ghedon", "garmando@gmail.com", 0)""" #password is password
+		   VALUES("armandosexyguy", "$2b$12$L5/Ow/BUmwE7cg51ZBCYZe3SF/jmw3dFfqtQrRcjQ/CW79fknbFWW",
+		   		  "$2b$12$L5/Ow/BUmwE7cg51ZBCYZe", "Armando", "Ghedon", "garmando@gmail.com", 0)""" #password is password
 cursor.execute(query)
 
 query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("proteinmuscleman29", "$2a$12$cXf7sWJ3xWawYaQxoxOsieR7EMAY7L88r1OpL7hms7JTd4sDxINBC",
-		   		  "fMYY63TGYOvJI7Gr3Ux9", "Muscolo", "Mister", "mmuscolo@gmail.com", 0)""" #password is prafuri
+		   VALUES("proteinmuscleman29", "$2b$12$HhH5LGXEqQF9KuAm4pJCjOCch6wifMKQY06trbHBcDzpZ8plYmZK6",
+		   		  "$2b$12$HhH5LGXEqQF9KuAm4pJCjO", "Muscolo", "Mister", "mmuscolo@gmail.com", 0)""" #password is prafuri
 cursor.execute(query)
 
 query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("ladiesman69", "$2a$12$8os/YludCoo490dlDagUkeobuhTL9FarclztgGKeIaC2/l/0ua.Ye",
-		   		  "jPN3kqtLoGNYKU70stib", "Casanova", "Amantu", "gigolou@gmail.com", 0)""" #password is boner
+		   VALUES("ladiesman69", "$2b$12$6KfM2W6iFUlnbEEcBPkB8.cSXXv8qgmJ.0KSbTlDwFeEKch9lJrua",
+		   		  "$2b$12$6KfM2W6iFUlnbEEcBPkB8.", "Casanova", "Amantu", "gigolou@gmail.com", 0)""" #password is boner
 cursor.execute(query)
 
 query = """CREATE TABLE LOCATIONS (
