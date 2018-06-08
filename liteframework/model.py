@@ -7,6 +7,7 @@ class Model:
 	table_name = ""
 	escaped_column_names = []
 	column_names = []
+	db_connection = None
 
 	def __init__(self):
 		self.__query = ""
@@ -15,18 +16,25 @@ class Model:
 		self.__password = App.config.get('DATABASE', 'password')
 		self.__db_address = App.config.get('DATABASE', 'db_address')
 
+	def __del__(self):
+		if db_connection:
+			db_connection.commit()
+			db_connection.close()
+
 	def __get_connection_cursor(self):
-		dbConnection = MySQLdb.connect(
-			self.__db_address, 
-			self.__username,
-			self.__password, 
-			self.__database
-		)
-		cursor = dbConnection.cursor()
+		if not self.db_connection:
+			self.db_connection = MySQLdb.connect(
+				self.__db_address, 
+				self.__username,
+				self.__password, 
+				self.__database
+			)
+		cursor = self.db_connection.cursor()
 		return cursor
 
 	def __commit(self):
 		cursor = self.__get_connection_cursor()
+		self.db_connection.commit()
 		cursor.execute("COMMIT;")
 
 	def __execute(self, sql):
