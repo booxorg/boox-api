@@ -184,3 +184,4 @@ query = """CREATE TABLE TOKENS (
 		   TOKEN VARCHAR(20),
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
+cursor.execute("COMMIT;")
