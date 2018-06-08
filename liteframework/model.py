@@ -7,6 +7,7 @@ class Model:
 	table_name = ""
 	escaped_column_names = []
 	column_names = []
+	db_connection = None
 
 	def __init__(self):
 		self.__query = ""
@@ -15,23 +16,30 @@ class Model:
 		self.__password = App.config.get('DATABASE', 'password')
 		self.__db_address = App.config.get('DATABASE', 'db_address')
 
+	def __del__(self):
+		if db_connection:
+			db_connection.commit()
+			db_connection.close()
+
 	def __get_connection_cursor(self):
-		dbConnection = MySQLdb.connect(
-			self.__db_address, 
-			self.__username,
-			self.__password, 
-			self.__database
-		)
-		cursor = dbConnection.cursor()
+		if not self.db_connection:
+			self.db_connection = MySQLdb.connect(
+				self.__db_address, 
+				self.__username,
+				self.__password, 
+				self.__database
+			)
+		cursor = self.db_connection.cursor()
 		return cursor
 
 	def __commit(self):
 		cursor = self.__get_connection_cursor()
+		self.db_connection.commit()
 		cursor.execute("COMMIT;")
 
 	def __execute(self, sql):
 		cursor = self.__get_connection_cursor();
-		print sql
+		#print sql
 		#sql = MySQLdb.escape_string(sql)
 		cursor.execute(sql);
 		return cursor.fetchall()
@@ -85,15 +93,16 @@ class Model:
 	def insert(self, column_values):
 		columns = column_values.keys()
 		values = []
-		
+
 		for (key, value) in column_values.iteritems():
 			if(isinstance(value, basestring)):
 				values.append('"%s"' % (value))
 			else:
 				values.append('%s' % (str(value)))
 
-		self.__query = 'INSERT INTO `%s` (%s) VALUES (%s)' % (self.table_name, ', '.join(columns), ', '.join(values))
+		self.__query = 'INSERT INTO %s (%s) VALUES (%s);' % (self.table_name, ', '.join(columns), ', '.join(values))
 		self.__execute(self.__query)
+		self.__commit()
 		return None
 
 	#Creates an update query. It can be used in combination with where. 
@@ -123,7 +132,7 @@ class Model:
 	#Returns the result of a query as a dictionary {column_name : value, ...}. Must be used only with query
 	def get(self):
 		results = self.__execute(self.__query)
-		print results, self.column_names
+		#print results, self.column_names
 		dict_list = []
 		for row in results:
 			current_result = {}
