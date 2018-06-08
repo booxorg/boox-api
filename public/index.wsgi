@@ -72,7 +72,7 @@ def application(environ, start_response):
     request.cookies = SimpleCookie()
     if 'HTTP_COOKIE' in environ:
         request.cookies.load(environ['HTTP_COOKIE'])
-    request.params = urlparse.parse_qs(urlparse.urlparse(request.url).query)
+    request.params = dict(urlparse.parse_qsl(urlparse.urlparse(request.url).query))
     request.url_no_params = urlparse.urljoin(request.url, urlparse.urlparse(request.url).path)
     # Request build finish
 

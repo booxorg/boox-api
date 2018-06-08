@@ -45,21 +45,24 @@ def Route(*args, **kwargs):
             new_route.method = 'GET' if 'method' not in kwargs else kwargs['method']
             new_route.action = action_method
             new_route.disabled = False if 'disabled' not in kwargs else kwargs['disabled']
+            new_route.middleware = [] if 'middleware' not in kwargs else kwargs['middleware']
             if not new_route.disabled:
-                App.routing_table[kwargs['url']] = copy.deepcopy(new_route)
+                App.routing_table.append(new_route)
         return wrapper
     return decorator
 
 
 def route_url(request):
-    for template, route in App.routing_table.iteritems():
+    for route in App.routing_table:
         if request.method == route.method and route.disabled == False:
-            result, variables = Util.match_url(template, request.url_no_params)
+            result, variables = Util.match_url(route.template, request.url_no_params)
             if result:
-                print 'url {} matched route {}, variables={}'.format(request.url, template, variables)
-                if request.params:
-                    for (key, value) in request.params.items():
-                        variables.update({key: value[0]})
+                for middleware_func in route.middleware:
+                    result, return_value = middleware_func(variables, request)
+                    if not result:
+                        return return_value
+
+                print 'url {} matched route {}, variables={}'.format(request.url, route.template, variables)
                 return route.action(request=request, variables=variables)
     return Controller.response_not_found()
 
