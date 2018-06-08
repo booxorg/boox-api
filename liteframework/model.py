@@ -31,7 +31,7 @@ class Model:
 
 	def __execute(self, sql):
 		cursor = self.__get_connection_cursor();
-		print sql
+		#print sql
 		#sql = MySQLdb.escape_string(sql)
 		cursor.execute(sql);
 		return cursor.fetchall()
@@ -85,15 +85,16 @@ class Model:
 	def insert(self, column_values):
 		columns = column_values.keys()
 		values = []
-		
+
 		for (key, value) in column_values.iteritems():
 			if(isinstance(value, basestring)):
 				values.append('"%s"' % (value))
 			else:
 				values.append('%s' % (str(value)))
 
-		self.__query = 'INSERT INTO `%s` (%s) VALUES (%s)' % (self.table_name, ', '.join(columns), ', '.join(values))
+		self.__query = 'INSERT INTO %s (%s) VALUES (%s);' % (self.table_name, ', '.join(columns), ', '.join(values))
 		self.__execute(self.__query)
+		self.__commit()
 		return None
 
 	#Creates an update query. It can be used in combination with where. 
@@ -123,7 +124,7 @@ class Model:
 	#Returns the result of a query as a dictionary {column_name : value, ...}. Must be used only with query
 	def get(self):
 		results = self.__execute(self.__query)
-		print results, self.column_names
+		#print results, self.column_names
 		dict_list = []
 		for row in results:
 			current_result = {}
