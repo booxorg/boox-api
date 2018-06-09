@@ -1,30 +1,30 @@
 import MySQLdb
 
 
-dbConnection = MySQLdb.connect("localhost", "root", "root", "boox")
+dbConnection = MySQLdb.connect("localhost", "root", "pass", "boox")
 cursor = dbConnection.cursor()
 
-query = """DROP TABLE USERS;"""
+query = """DROP TABLE IF EXISTS USERS;"""
 cursor.execute(query)
-query = """DROP TABLE LOCATIONS;"""
+query = """DROP TABLE IF EXISTS LOCATIONS;"""
 cursor.execute(query)
-query = """DROP TABLE PREFERENCES;"""
+query = """DROP TABLE IF EXISTS PREFERENCES;"""
 cursor.execute(query)
-query = """DROP TABLE BOOKS;"""
+query = """DROP TABLE IF EXISTS BOOKS;"""
 cursor.execute(query)
-query = """DROP TABLE AUTHORS;"""
+query = """DROP TABLE IF EXISTS AUTHORS;"""
 cursor.execute(query)
-query = """DROP TABLE AUTHORBOOKS;"""
+query = """DROP TABLE IF EXISTS AUTHORBOOKS;"""
 cursor.execute(query)
-query = """DROP TABLE USERBOOKS;"""
+query = """DROP TABLE IF EXISTS USERBOOKS;"""
 cursor.execute(query)
-query = """DROP TABLE COVERS;"""
+query = """DROP TABLE IF EXISTS COVERS;"""
 cursor.execute(query)
-query = """DROP TABLE HISTORY;"""
+query = """DROP TABLE IF EXISTS HISTORY;"""
 cursor.execute(query)
-query = """DROP TABLE EXCHANGES;"""
+query = """DROP TABLE IF EXISTS EXCHANGES;"""
 cursor.execute(query)
-query = """DROP TABLE TOKENS;"""
+query = """DROP TABLE IF EXISTS TOKENS;"""
 cursor.execute(query)
 
 query = """CREATE TABLE USERS (
@@ -124,13 +124,13 @@ query = """CREATE TABLE AUTHORS (
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 
-query = """INSERT INTO AUTHORS(NAME, BOOKCOUNT) VALUES ("BOMBERMANE J. PHILLIPS", 1)"""
+query = """INSERT INTO AUTHORS(NAME) VALUES ("BOMBERMANE J. PHILLIPS")"""
 cursor.execute(query)
 
-query = """INSERT INTO AUTHORS(NAME, BOOKCOUNT) VALUES ("BUFFY MCBUFFSON", 1)"""
+query = """INSERT INTO AUTHORS(NAME) VALUES ("BUFFY MCBUFFSON")"""
 cursor.execute(query)
 
-query = """INSERT INTO AUTHORS(NAME, BOOKCOUNT) VALUES ("ADA LOVE", 1)"""
+query = """INSERT INTO AUTHORS(NAME) VALUES ("ADA LOVE")"""
 cursor.execute(query)
 
 
