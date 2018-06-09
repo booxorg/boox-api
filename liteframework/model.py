@@ -125,6 +125,7 @@ class Model:
 			self.update(column_values)
 			for (key, value) in to_match.iteritems():
 				self.where(key, '=', value)
+			print self.__query
 			self.execute()
 			return self.__get_last_row()
 		else:
@@ -141,7 +142,7 @@ class Model:
 			else:
 				values.append('%s = %s' % (key, str(value)))
 
-		self.__query = 'UPDATE %s SET %s WHERE LAST_UPDATE_ID(%s)' % (self.table_name, ', '.join(values), self.primary_key)
+		self.__query = 'UPDATE %s SET %s,%s=LAST_INSERT_ID(%s)' % (self.table_name, ', '.join(values), self.primary_key, self.primary_key)
 		return self
 
 	#Creates a delete query. It can be used in combination with where.
