@@ -5,9 +5,13 @@ import liteframework.cookie as Cookie
 import liteframework.middleware.params as Params
 import app.middleware.token_valid as TokenCheck
 import liteframework.validator as Validator
+
 import app.models.book as Book
 import app.models.user_book as UserBook
+import app.models.author_book as AuthorBook
 import app.models.author as Author
+import app.models.token as Token
+
 import urllib2
 import xmltodict
 from datetime import datetime
@@ -84,7 +88,7 @@ def search_external(variables={}, request={}):
 def add_book(variables={}, request={}):
     status = 'success'
     message = ''
-    values = None
+    values = {}
 
     title = request.params['title']
     author = request.params['author']
@@ -101,16 +105,28 @@ def add_book(variables={}, request={}):
         status = 'error',
         message = error_message
     else:
-        datetime_object = datetime.strptime(expires, '%d-%m-%Y')
-        craeted_book = Book.Book().insert({
-            'ISBN' : '0123456789876',
-            'title' : title,
-            'genre' : genre,
-            'expires' : datetime_object.strftime('%Y-%m-%d')
-        })
-
+        current_user_id = Token.Token().query('USERID').where('TOKEN', '=', request.params['token']).get()[0]['USERID']
         created_author = Author.Author().update_or_create({'NAME' : author}, {'NAME' : author})
 
+        datetime_object = datetime.strptime(expires, '%d-%m-%Y')
+        created_book = Book.Book().insert({
+            'ISBN' : '0123456789876',
+            'TITLE' : title,
+            'GENRE' : genre,
+            'EXPIRES' : datetime_object.strftime('%Y-%m-%d'),
+            'AUTHORID' : created_author['ID']
+        })
+
+        created_user_book = UserBook.UserBook().insert({
+            'BOOKID' : created_book['ID'],
+            'USERID' : current_user_id   
+        })
+
+        message = 'the book has been added'
+        values['book_id'] = created_book['ID']
+        values['user_id'] = current_user_id
+        values['author_id'] = created_author['ID']
+    
     result = {
         'status' : status,
         'message' : message,

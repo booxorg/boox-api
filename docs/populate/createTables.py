@@ -14,8 +14,6 @@ query = """DROP TABLE IF EXISTS BOOKS;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS AUTHORS;"""
 cursor.execute(query)
-query = """DROP TABLE IF EXISTS AUTHORBOOKS;"""
-cursor.execute(query)
 query = """DROP TABLE IF EXISTS USERBOOKS;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS COVERS;"""
@@ -148,13 +146,6 @@ query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (2, 2)"""
 cursor.execute(query)
 
 query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (3, 3)"""
-cursor.execute(query)
-
-query = """CREATE TABLE AUTHORBOOKS (
-		   ID INT NOT NULL AUTO_INCREMENT,
-		   BOOKID INT,
-		   AUTHORID INT,
-		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 
 query = """CREATE TABLE COVERS (
