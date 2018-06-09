@@ -125,7 +125,6 @@ class Model:
 			self.update(column_values)
 			for (key, value) in to_match.iteritems():
 				self.where(key, '=', value)
-			print self.__query
 			self.execute()
 			return self.__get_last_row()
 		else:
