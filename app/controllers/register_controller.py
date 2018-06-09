@@ -31,18 +31,18 @@ def register(variables={}, request={}):
             salt = bcrypt.gensalt()
             password_hash = bcrypt.hashpw(password.encode('utf8'), salt)
             insert_user_dict = {
-                                    "USERNAME" : username, "PASSWORD" : password_hash, \
-                                    "SALT" : salt, "FIRSTNAME" : fname, \
-                                    "LASTNAME" : lname, "EMAIL" : email, \
-                                    "ISADMINISTRATOR" : 0
-                               }
-            user.insert(insert_user_dict)
-
-            response_dict_list = user.query("ID").where("USERNAME", "=", username).get()
-            print response_dict_list
-
+                "USERNAME" : username, 
+                "PASSWORD" : password_hash, 
+                "SALT" : salt, 
+                "FIRSTNAME" : fname,
+                "LASTNAME" : lname, 
+                "EMAIL" : email,
+                "ISADMINISTRATOR" : 0
+            }
+            inserted_user = user.insert(insert_user_dict)
+            
             insert_token_dict = {
-                "USERID" : response_dict_list[0]["ID"], 
+                "USERID" : inserted_user["ID"], 
                 "TOKENTYPE" : "booxtoken",
                 "TOKEN" : generated_token
             }

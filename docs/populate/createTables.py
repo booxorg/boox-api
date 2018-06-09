@@ -14,6 +14,8 @@ query = """DROP TABLE BOOKS;"""
 cursor.execute(query)
 query = """DROP TABLE AUTHORS;"""
 cursor.execute(query)
+query = """DROP TABLE AUTHORBOOKS;"""
+cursor.execute(query)
 query = """DROP TABLE USERBOOKS;"""
 cursor.execute(query)
 query = """DROP TABLE COVERS;"""
@@ -119,7 +121,6 @@ cursor.execute(query)
 query = """CREATE TABLE AUTHORS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   NAME VARCHAR(30),
-		   BOOKCOUNT INT,
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 
@@ -149,6 +150,12 @@ cursor.execute(query)
 query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (3, 3)"""
 cursor.execute(query)
 
+query = """CREATE TABLE AUTHORBOOKS (
+		   ID INT NOT NULL AUTO_INCREMENT,
+		   BOOKID INT,
+		   AUTHORID INT,
+		   PRIMARY KEY(ID));"""
+cursor.execute(query)
 
 query = """CREATE TABLE COVERS (
 		   ID INT NOT NULL AUTO_INCREMENT,
