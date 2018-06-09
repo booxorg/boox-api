@@ -15,6 +15,7 @@ class Model:
 		self.__username = App.config.get('DATABASE', 'username')
 		self.__password = App.config.get('DATABASE', 'password')
 		self.__db_address = App.config.get('DATABASE', 'db_address')
+		self.primary_key = App.config.get('DATABASE', 'primary_key')
 
 	def __del__(self):
 		if self.db_connection:
@@ -38,26 +39,36 @@ class Model:
 		cursor.execute("COMMIT;")
 
 	def __execute(self, sql):
-		cursor = self.__get_connection_cursor();
+		cursor = self.__get_connection_cursor()
 		#print sql
 		#sql = MySQLdb.escape_string(sql)
 		cursor.execute(sql);
 		return cursor.fetchall()
+
+	def __resolve_column_names(self, *column_names):
+		if column_names[0] == '*':
+			cursor = self.__get_connection_cursor();
+			sql = 'SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = "%s" AND TABLE_NAME = "%s"' % (self.__database, self.table_name)
+			results = self.__execute(sql)
+			return map(itemgetter(0), results)
+		else:
+			return column_names
+
+	def __get_last_row(self):
+		last_id = int(self.__execute('SELECT LAST_INSERT_ID()')[0][0])
+		self.__query = 'SELECT * FROM `%s` WHERE %s = %d' % (self.table_name, self.primary_key, last_id)
+		result = self.__execute(self.__query)
+		return self.__match_results(result[0], self.__resolve_column_names('*'))
+
+	def __match_results(self, results, columns):
+		return dict(zip(columns, results))
 
 	def __column_escape(self, column_name):
 		return re.sub(r'([^.]*)\.([^.]*)', r'`\1`.\2', column_name)
 
 	#Creates a SELECT query. If * is provided, it searches and replaces * with all the table's columns
 	def query(self, *column_names):
-
-		if(column_names[0] == '*'):
-			cursor = self.__get_connection_cursor();
-			sql = 'SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s' % (self.__database, self.table_name)
-			results = self.__execute(sql)
-			self.column_names = map(itemgetter(0), results)
-		else:
-			self.column_names = column_names
-
+		self.column_names = self.__resolve_column_names(*column_names)
 		self.escaped_column_names = [self.__column_escape(column) for column in self.column_names]
 		self.__query = "SELECT %s FROM `%s`" % (', '.join(self.escaped_column_names), self.table_name)
 		return self
@@ -103,7 +114,21 @@ class Model:
 		self.__query = 'INSERT INTO %s (%s) VALUES (%s);' % (self.table_name, ', '.join(columns), ', '.join(values))
 		self.__execute(self.__query)
 		self.__commit()
-		return None
+		return self.__get_last_row()
+
+	def update_or_create(self, to_match, column_values):
+		self.query('*')
+		for (key, value) in to_match.iteritems():
+			self.where(key, '=', value)
+		results = self.get()
+		if len(results) > 0:
+			self.update(column_values)
+			for (key, value) in to_match.iteritems():
+				self.where(key, '=', value)
+			self.execute()
+			return self.__get_last_row()
+		else:
+			return self.insert(column_values)
 
 	#Creates an update query. It can be used in combination with where. 
 	def update(self, column_values):
@@ -116,7 +141,7 @@ class Model:
 			else:
 				values.append('%s = %s' % (key, str(value)))
 
-		self.__query = 'UPDATE %s SET %s' % (self.table_name, ', '.join(values))
+		self.__query = 'UPDATE %s SET %s WHERE LAST_UPDATE_ID(%s)' % (self.table_name, ', '.join(values), self.primary_key)
 		return self
 
 	#Creates a delete query. It can be used in combination with where.
@@ -132,15 +157,10 @@ class Model:
 	#Returns the result of a query as a dictionary {column_name : value, ...}. Must be used only with query
 	def get(self):
 		results = self.__execute(self.__query)
-		#print results, self.column_names
-		dict_list = []
-		for row in results:
-			current_result = {}
-			for i in range(len(row)):
-				current_result.update({self.column_names[i]: row[i]})
-			dict_list.append(current_result)
-		
-		return dict_list	
+		final_list = []
+		for result in results:
+			final_list.append(self.__match_results(result, self.column_names))
+		return final_list
 
 """
 Examples: 
