@@ -56,18 +56,22 @@ cursor.execute(query)
 query = """CREATE TABLE LOCATIONS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   USERID INT,
-		   LOCATION VARCHAR(100),
+		   COUNTRY VARCHAR(100),
+		   CITY VARCHAR(100),
+		   VILLAGE VARCHAR(100),
+		   STREET VARCHAR(100),
+		   STREETNUMBER VARCHAR(10),
 		   PRIMARY KEY(ID));"""
 
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, LOCATION) VALUES (1, "Iasi, Strada Bombei, nr. 512")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (1, "Romania", "Iasi", "", "Musatini", "55")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, LOCATION) VALUES (2, "Sangerei, Strada Denis, nr. 5")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (2, "Romania", "Iasi", "", "Plaiesilor", "55")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, LOCATION) VALUES (3, "Tzabana, Strada Tzaganului, nr. 69")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (3, "Romania", "Iasi", "", "Stejar", "41")"""
 cursor.execute(query)
 
 
@@ -183,11 +187,13 @@ query = """CREATE TABLE TOKENS (
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 
+
 query = """CREATE TABLE NOTIFICATIONS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   BOOKID INT,
 		   OWNERID INT,
 		   RECEIVERID INT,
-		   PRIMARY KEY(ID));
+		   PRIMARY KEY(ID));"""
+cursor.execute(query)
 
 cursor.execute("COMMIT;")
