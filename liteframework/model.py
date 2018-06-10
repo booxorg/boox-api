@@ -64,7 +64,9 @@ class Model:
 		return dict(zip(columns, results))
 
 	def __column_escape(self, column_name):
-		return re.sub(r'([^.]*)\.([^.]*)', r'`\1`.\2', column_name)
+		if not '.' in column_name:
+			return '`%s`.%s' % (self.table_name, column_name)
+		return column_name
 
 	#Creates a SELECT query. If * is provided, it searches and replaces * with all the table's columns
 	def query(self, *column_names):

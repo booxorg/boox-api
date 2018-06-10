@@ -54,7 +54,7 @@ def search_external(variables={}, request={}):
         result = Goodreads.request_search(query, limit)
 
     except UserWarning, e:
-        print 'user warining: ', str(e)
+        print 'user warining: ', repr(e)
         return Controller.response_json({
             'status' :  'error',
             'message' : str(e)   
