@@ -75,6 +75,11 @@ class Model:
 		self.__query = "SELECT %s FROM `%s`" % (', '.join(self.escaped_column_names), self.table_name)
 		return self
 
+	def count(self):
+		self.__query = "SELECT COUNT(*) FROM `%s`" % (self.table_name)
+		result = self.__execute(self.__query)
+		return result[0][0]
+
 	#Adds a where clause
 	def where(self, column_name, operator, value):
 		if(isinstance(value, basestring)):

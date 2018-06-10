@@ -36,7 +36,7 @@ def get_genres(variables={}, request={}):
     }
     return Controller.response_json(result)
 
-@Routing.Route(url='/search-title', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token','query')])
+@Routing.Route(url='/book/search', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token','query')])
 def search_external(variables={}, request={}):
     query = request.params['query']
     limit = request.params.get('limit', '0')
@@ -162,3 +162,4 @@ def add_book(variables={}, request={}):
         'message' : message,
         'response' : values
     })
+
