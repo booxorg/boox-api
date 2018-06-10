@@ -11,9 +11,8 @@ import app.models.user_book as UserBook
 import app.models.author_book as AuthorBook
 import app.models.author as Author
 import app.models.token as Token
-
-import urllib2
-import xmltodict
+import app.api.goodreads_api as Goodreads
+import MySQLdb
 from datetime import datetime
 
 genres = [
@@ -23,6 +22,7 @@ genres = [
     'SciFi',
     'Cooking'
 ]
+
 
 @Routing.Route(url='/genres', method='GET')
 def get_genres(variables={}, request={}):
@@ -38,43 +38,39 @@ def get_genres(variables={}, request={}):
 
 @Routing.Route(url='/search-title', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token','query')])
 def search_external(variables={}, request={}):
-    key = App.config.get('GOODREADS', 'key')
     query = request.params['query']
-    limit = request.params.get('limit', '')
+    limit = request.params.get('limit', '0')
 
-    goodreads_api = 'https://www.goodreads.com/search/index.xml?key={}&q={}&search[title]'.format(key, query)
-    api_response = urllib2.urlopen(goodreads_api)
-    api_response_data = api_response.read().decode(api_response.headers.getparam("charset"))
-    api_dict = dict()
+    ok, error_message = Validator.validate([
+        (query, r'^[a-zA-Z0-9, \'"+-=;?]+$', 'title query is invalid'),
+        (limit, r'^([0-9]|[1-9][0-9]+)$', 'limit value is invalid, should be a positive number')
+    ])
 
-    result = {}
     try:
-        api_dict = xmltodict.parse(api_response_data)
-        api_work = api_dict['GoodreadsResponse']['search']['results']['work']
-        result['books'] = []
-        for api_book in api_work:
-            try:
-                book = {}
-                book['goodreads_id'] = int(api_book['best_book']['id']['#text'])
-                book['title'] = api_book['best_book']['title']
-                book['author'] = api_book['best_book']['author']['name']
-                book['author_id'] = api_book['best_book']['author']['id']['#text']
-                book['image_url'] = api_book['best_book']['image_url']
-                book['small_image_url'] = api_book['best_book']['small_image_url']
-                if 'original_publication_day' in api_book and 'original_publication_month' in api_book:
-                    book['publication_date'] = '{}-{}-{}'.format(
-                        api_book['original_publication_day']['#text'], 
-                        api_book['original_publication_month']['#text'], 
-                        api_book['original_publication_year']['#text']
-                    )
-                else:
-                    book['publication_date'] = api_book['original_publication_year']['#text']
-                result['books'].append(book)
-            except:
-                pass
+        if not ok:
+            raise UserWarning(error_message)
+
+        limit = int(limit)
+        result = Goodreads.request_search(query, limit)
+
+    except UserWarning, e:
+        print 'user warining: ', str(e)
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : str(e)   
+        })
     except Exception, e:
-        print str(e)
-    return Controller.response_json(result)
+        print 'fatal error: ', repr(e)
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : 'fatal error occured'   
+        })
+
+    return Controller.response_json({
+        'status' : 'success',
+        'message' : 'search sucessful',
+        'response' : result    
+    })
 
 
 @Routing.Route(
@@ -82,7 +78,7 @@ def search_external(variables={}, request={}):
     method='GET', 
     middleware=[
         TokenCheck.token_valid, 
-        Params.has_params('token', 'title', 'author', 'expires', 'genre')
+        Params.has_params('token', 'expires', 'genre', 'goodreads_id')
     ]
 )
 def add_book(variables={}, request={}):
@@ -90,46 +86,79 @@ def add_book(variables={}, request={}):
     message = ''
     values = {}
 
-    title = request.params['title']
-    author = request.params['author']
+    #title = request.params['title']
+    #author = request.params['author']
     expires = request.params['expires']
     genre = request.params['genre']
+    goodreads_id = request.params['goodreads_id']
     ok, error_message = Validator.validate([
-        (title, r'[A-Za-z0-9\s\-_,\.;:()]+', 'title value is invalid'),
-        (author, r'[a-zA-Z0-9 ,.\'-]+', 'author value is invalid'),
-        (genre, r'(%s)' % ('|'.join(genres)), 'genre value is invalid'),
-        (expires, r'([1-9]|([012][0-9])|(3[01]))\-([0]{0,1}[1-9]|1[012])\-\d\d\d\d', 'expires value is invalid')
+        #(title, r'^[A-Za-z0-9\s\-_,\.;:()]+$', 'title value is invalid'),
+        #(author, r'^[a-zA-Z0-9 ,.\'-]+$', 'author value is invalid'),
+        (genre, r'^(%s)$' % ('|'.join(genres)), 'genre value is invalid'),
+        (expires, r'^([1-9]|([012][0-9])|(3[01]))\-([0]{0,1}[1-9]|1[012])\-\d\d\d\d$', 'expires value is invalid'),
+        (goodreads_id, r'^[0-9]|[1-9][0-9]+$', 'goodreads_id value is invalid')
     ])
 
-    if not ok:
-        status = 'error',
-        message = error_message
-    else:
-        current_user_id = Token.Token().query('USERID').where('TOKEN', '=', request.params['token']).get()[0]['USERID']
-        created_author = Author.Author().update_or_create({'NAME' : author}, {'NAME' : author})
+    try:
+        if not ok:
+            raise UserWarning(error_message)
+        book = Goodreads.find_book_by_id(int(goodreads_id))
+        if not book:
+            raise UserWarning('no book with such id was found')
 
+        current_user_id = Token.Token().query('USERID').where('TOKEN', '=', request.params['token']).get()[0]['USERID']
+        if not current_user_id or current_user_id == 0:
+            raise UserWarning('invalid user connected to token')
+
+        created_author = Author.Author().update_or_create({'NAME' : book['author']}, {'NAME' : book['author']})
+        if not created_author:
+            raise UserWarning('unable to create or update the book author')
+
+        
         datetime_object = datetime.strptime(expires, '%d-%m-%Y')
         created_book = Book.Book().insert({
-            'ISBN' : '0123456789876',
-            'TITLE' : title,
+            'ISBN' : book['isbn'],
+            'TITLE' : book['title'],
             'GENRE' : genre,
             'EXPIRES' : datetime_object.strftime('%Y-%m-%d'),
             'AUTHORID' : created_author['ID']
         })
+        if not created_book:
+            raise UserWarning('unable to add book to the database')
 
         created_user_book = UserBook.UserBook().insert({
             'BOOKID' : created_book['ID'],
             'USERID' : current_user_id   
         })
+        if not created_user_book:
+            raise UserWarning('unable to connect user to book')
 
         message = 'the book has been added'
         values['book_id'] = created_book['ID']
         values['user_id'] = current_user_id
         values['author_id'] = created_author['ID']
-    
-    result = {
+        
+    except UserWarning, e:
+        print 'User Warning: ', str(e)
+        return Controller.response_json({
+            'status' : 'error',
+            'message' : str(e)    
+        })
+    except (MySQLdb.Error, MySQLdb.Warning), e:
+        print 'DB exception: ', str(e)
+        return Controller.response_json({
+            'status' : 'error',
+            'message' : 'there are problems connecting to server database'  
+        })
+    except Exception, e:
+        print 'Fatal exception: ', str(e)
+        return Controller.response_json({
+            'status' : 'error',
+            'message' : 'fatal error occured'  
+        })
+
+    return Controller.response_json({
         'status' : status,
         'message' : message,
         'response' : values
-    }
-    return Controller.response_json(result)
+    })
