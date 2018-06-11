@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ full_url('/public/assets/css/default.css') }}">
 </head>
 <body>
-    <p>It is I, {{ name }}, you have seen the doge {{ number }} times</p>
+    <p>{{ session('message', '') }}. You have seen the doge {{ number }} times</p>
     <pre>{{ info }}</pre>
 </body>
 </html>

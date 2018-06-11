@@ -26,4 +26,4 @@ new_cookies = None
 cookies_pub = None
 cookies_prv = None
 config = None
-
+session = None
