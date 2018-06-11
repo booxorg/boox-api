@@ -69,6 +69,7 @@ def route_url(request):
 def handle_request(request):
     output, content, status = route_url(request)
     response_headers = output.items()
+    response_headers.append(('Access-Control-Allow-Origin', '*'))
 
     for cookie in request.new_cookies.values():
         response_headers.append(('Set-Cookie', cookie.OutputString()))
