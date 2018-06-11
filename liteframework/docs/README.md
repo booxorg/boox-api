@@ -29,6 +29,10 @@ print(App.environ)
 | global_functions  | Internal object, contains all the global functions declared by the framework and user |
 | jinja_env         | The enviroment object of the template engine [Jinja](http://jinja.pocoo.org/)         |
 | routing_table     | Contains all the information about the user defined routes                            |
+| cookies_pub       | The public RSA1024 key for cookie encryption, gets loaded from `storage/keys/cookie_public.pem` |
+| cookies_prv       | The private RSA1024 key for cookie decryption, gets loaded from `storage/keys/cookie_private.pem` |
+| config            | The [ConfigParser](https://docs.python.org/2/library/configparser.html) object, that holds the application configuration read from `config.ini` |
+| session           | Session object that gets created (or loaded) on each request |
 
 ### Request Object 
 Gets created and passed to every defined route with the name `request`
@@ -51,6 +55,10 @@ request.request_scheme
 | method | `GET`, `POST`, `PUT` and others |
 | url | Relative url starting from the root; `/index`, `/test/value` are some examples
 | input | Form input, if given |  
+| cookies | Cookie values read from the `HTTP_COOKIE` header |
+| new_cookies | New cookie values that will be set during the runtime of the application. Will be sent to the user with the `Set-Cookie` header |
+| params | Python dictionary holding the `GET` parameter `(key, value)` pairs
+| url_no_params | The request url without get parameters, for internal use in matching |
 
 # What happens next
 After the `Application` and `Request` have been initialized, the `Router` takes control.
@@ -74,7 +82,7 @@ The decorator `Routing.Route` binds the given url template to the declared funct
 |------|-------------|------|
 | url | The template url to be matched, has a specific format which is described below | String |
 | method | `GET`, `POST`, `PUT`, `DELETE` may be used, only the matching requests will be redirected to the function | String |
-| middleware | (_In development_) Contains the list with names of the middleware to be called before the function, but after the match | List |
+| middleware | Contains the list with names of the middleware to be called before the function, but after the match | List |
 | disabled | Boolean value that activates/deactivates the route | Boolean |
 
 #### Template format
