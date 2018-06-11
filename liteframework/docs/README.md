@@ -87,17 +87,17 @@ The decorator `Routing.Route` binds the given url template to the declared funct
 
 #### Template format
 A template should be _relative_, from the root, for example `/main`, `/user/id`, `/profile`
-Optionally, a template allows variables in the following format `{{<variable_name>::<variable_regex>}}`
+Optionally, a template allows variables in the following format `{<variable_name>::<variable_regex>}`
 1. `<variable_name>` is how it will be named and passed along to the controller, for example `user_id`, `page_id`, etc.
 2. `<variable_regex>` is the python regex that should match the variable, for example `\d\d` will match two digits, `[A-Z]{1, 5}` will match a string containing letters from A to Z from 1 to max 5 times.
 
 Some variable examples are 
-1. `{{name::[A-Za-z]+}}`
-2. `{{id::[0-9]+}}`
+1. `{name::[A-Za-z]+}`
+2. `{id::[0-9]+}`
 
 A template can contain an indefinite number of variables with **unique** names.
-1. `/user/{{id::[0-9]{10}}}/profile`
-2. `/product/{{name::[A-Za-z_-]+}}`
+1. `/user/{id::[0-9]{10}}/profile`
+2. `/product/{name::[A-Za-z_-]+}`
 
 **All the variables will be passed along to the controller in the `variables` dictionary having their names as keys.**
 
