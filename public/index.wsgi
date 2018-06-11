@@ -10,6 +10,8 @@ import liteframework.util as Util
 import liteframework.routing as Routing
 import liteframework.post as Post
 import liteframework.encryption as Encryption
+import liteframework.cookie as Cookie
+import liteframework.session as Session
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
 from Cookie import SimpleCookie
 import ConfigParser
@@ -76,7 +78,12 @@ def application(environ, start_response):
     request.url_no_params = urlparse.urljoin(request.url, urlparse.urlparse(request.url).path)
     # Request build finish
 
-    # Load user defined routes
+    # Create session
+    
+    App.session = Session.Session(request, App.config.get('APP', 'session_expire_days'))
+    print 'UUID is', App.session.uuid
 
-    return Routing.handle_request(request)
+    result = Routing.handle_request(request)
+    App.session.save(request)
+    return result
 

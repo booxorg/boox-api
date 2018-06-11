@@ -1,0 +1,17 @@
+(dp0
+S'expire'
+p1
+S'1'
+p2
+sS'data'
+p3
+(dp4
+S'message'
+p5
+S'It is I, liteframework'
+p6
+ssS'uuid'
+p7
+S'0aecfe0b-f90a-42ca-bd7d-3b176e9da724'
+p8
+s.

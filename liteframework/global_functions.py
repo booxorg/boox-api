@@ -30,3 +30,7 @@ def full_url(relative_path):
     url += relative_path
     
     return url
+
+@Global.GlobalFunction
+def session(key, default=None):
+    return App.session.get(key, default)
