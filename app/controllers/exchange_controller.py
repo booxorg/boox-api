@@ -43,7 +43,7 @@ def propose_exchange(variables={}, request={}):
 
 				insert_dict = { 
 								'OWNERID' : dict_owner[0]['USERID'], 'RECEIVERID' : dict_receiver[0]['USERID'],
-								'BOOKID' : book_id, 'EXCHANGEDATE' : date,
+								'BOOKID1' : book_id, 'EXCHANGEDATE' : date,
 								'ISFINISHED' : 0, 'HASSUCCEEDED' : 0
 				  	  		  }
 				message = 'the request has been registered'
@@ -81,14 +81,14 @@ def list_offers(variables={}, request={}):
 	return Controller.response_json(result)
 
 
-@Routing.Route(url='/exchange/respond', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token', 'bookid', 'accept')])
-def accept_offer(variables={}, request={}):
+@Routing.Route(url='/exchange/decline-proposition', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token', 'receiverid', 'bookid1')])
+def decline_proposition(variables={}, request={}):
 	status = 'success'
 	message = ''
 
 	token = request.params['token']
-	book_id = request.params['bookid']
-	accept = request.params['accept']
+	book_id = request.params['bookid1']
+	receiver_id = request.params['receiverid']
 
 	user_dict = Token.Token().query("USERID").where("TOKEN", "=", token).get()
 	book_dict = Book.Book().query("TITLE").where("ID", "=", book_id).get()
@@ -97,19 +97,123 @@ def accept_offer(variables={}, request={}):
 		status = 'error'
 		message = 'the book does not exist'
 	else:
-		exchange_dict = Exchange.Exchange().query("ISFINISHED").where("OWNERID", "=", user_dict[0]['USERID']). \
-															    condition("AND", "BOOKID", "=", book_id).get()
+		exchange_dict = Exchange.Exchange().query("*").where("OWNERID", "=", user_dict[0]['USERID']). \
+													   condition("AND", "BOOKID1", "=", book_id). \
+													   condition("AND", "RECEIVERID", "=", receiver_id).get()	
+
 		if not exchange_dict:
 			status = 'error'
 			message = 'the exchange does not exist'
-		elif(exchange_dict[0]['ISFINISHED'] == 1):
-			status = 'error'
-			message = 'the exchange has already been approved/denied'
 		else:
-			status = 'success'
-			message = 'a response has been assigned to the exchange request'
-			Exchange.Exchange().update({ 'HASSUCCEEDED' : accept, 'ISFINISHED' : 1}).execute()
+			if exchange_dict[0]['ISFINISHED'] == 1:
+				status = 'error'
+				message = 'the exchange has already been approved/denied'
+			else:
+				if exchange_dict[0]['BOOKID2'] != None:
+					status = 'error'
+					message = 'you cannot decline this exchange'
+				else:
+					Exchange.Exchange().update({ 'HASSUCCEEDED' : 0, 'ISFINISHED' : 1}). \
+										where("OWNERID", "=", user_dict[0]['USERID']). \
+									    condition("AND", "BOOKID1", "=", book_id). \
+									    condition("AND", "RECEIVERID", "=", receiver_id).execute()
+
+					status = 'success'
+					message = 'the exchange has been declined'
 
 	result = { 'status' : status, 'message' : message }
 
 	return Controller.response_json(result)
+
+
+@Routing.Route(url='/exchange/match-book', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token', 'receiverid', 'bookid1', 'bookid2')])
+def match_book(variables={}, request={}):
+	status = 'succes'
+	message = ''
+
+	token = request.params['token']
+	receiver_id = request.params['receiverid']
+	book_id1 = request.params['bookid1']
+	book_id2 = request.params['bookid2']	
+
+	user_dict = Token.Token().query("USERID").where("TOKEN", "=", token).get()
+	book1_dict = Book.Book().query("TITLE").where("ID", "=", book_id1).get()
+	book2_dict = Book.Book().query("TITLE").where("ID", "=", book_id2).get()
+
+	if not book1_dict or not book2_dict:
+		status = 'error'
+		message = 'one of the books does not exist'
+	else:
+		exchange_dict = Exchange.Exchange().query("*").where("OWNERID", "=", user_dict[0]['USERID']). \
+													   condition("AND", "BOOKID1", "=", book_id1). \
+													   condition("AND", "RECEIVERID", "=", receiver_id).get()	
+
+		if not exchange_dict:
+			status = 'error'
+			message = 'the exchange does not exist'	
+		else:
+			if exchange_dict[0]['ISFINISHED'] == 1:
+				status = 'error'
+				message = 'the exchange has already been approved/denied'
+			else:
+				if exchange_dict[0]['BOOKID2'] != None:
+					status = 'error'
+					message = 'you cannot respond to this exchange'
+				else:
+					Exchange.Exchange().update({ 'BOOKID2' : book_id2 }). \
+										where("OWNERID", "=", user_dict[0]['USERID']). \
+									    condition("AND", "BOOKID1", "=", book_id1). \
+									    condition("AND", "RECEIVERID", "=", receiver_id).execute()
+
+					status = 'success'
+					message = 'user responded to the exchange'		
+
+	result = { 'status' : status, 'message' : message }
+
+	return Controller.response_json(result)			
+
+
+@Routing.Route(url='/exchange/finish-exchange', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token', 'ownerid', 'bookid1', 'bookid2', 'accept')])
+def match_book(variables={}, request={}):
+	status = 'error'
+	message = ''
+
+	token = request.params['token']
+	owner_id = request.params['ownerid']
+	book_id1 = request.params['bookid1']
+	book_id2 = request.params['bookid2']
+	accept = request.params['accept']
+
+	user_dict = Token.Token().query("USERID").where("TOKEN", "=", token).get()
+	book1_dict = Book.Book().query("TITLE").where("ID", "=", book_id1).get()
+	book2_dict = Book.Book().query("TITLE").where("ID", "=", book_id2).get()
+
+	if not book1_dict or not book2_dict:
+		status = 'error'
+		message = 'one of the books does not exist'
+
+	else:
+		exchange_dict = Exchange.Exchange().query("*").where("RECEIVERID", "=", user_dict[0]['USERID']). \
+													   condition("AND", "BOOKID1", "=", book_id1). \
+													   condition("AND", "BOOKID2", "=", book_id2). \
+													   condition("AND", "OWNERID", "=", owner_id).get()
+		if not exchange_dict:
+			status = 'error'
+			message = 'the exchange does not exist'	
+		else:
+			if exchange_dict[0]['ISFINISHED'] == 1:
+				status = 'error'
+				message = 'the exchange has already been approved/denied'
+			else:
+					Exchange.Exchange().update({ 'ISFINISHED' : 1, 'HASSUCCEEDED' : accept }). \
+										where("RECEIVERID", "=", user_dict[0]['USERID']). \
+									    condition("AND", "BOOKID1", "=", book_id1). \
+									    condition("AND", "BOOKID2", "=", book_id2). \
+									    condition("AND", "OWNERID", "=", owner_id).execute()
+
+					status = 'success'
+					message = 'user responded to the exchange'		
+
+	result = { 'status' : status, 'message' : message }
+
+	return Controller.response_json(result)	
