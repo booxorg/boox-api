@@ -5,3 +5,4 @@ configparser https://docs.python.org/3/library/configparser.html
 StringGenerator https://pypi.org/project/StringGenerator/
 xmltodict https://github.com/martinblech/xmltodict
 requests https://pypi.org/project/requests/
+bcrypt https://pypi.org/project/bcrypt/

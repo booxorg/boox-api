@@ -8,7 +8,6 @@ import liteframework.validator as Validator
 
 import app.models.book as Book
 import app.models.user_book as UserBook
-import app.models.author_book as AuthorBook
 import app.models.author as Author
 import app.models.token as Token
 import app.api.goodreads_api as Goodreads
