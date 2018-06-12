@@ -34,3 +34,7 @@ def full_url(relative_path):
 @Global.GlobalFunction
 def session(key, default=None):
     return App.session.get(key, default)
+
+@Global.GlobalFunction
+def flash(key, default=None):
+    return App.session.flash(key, default)

@@ -63,4 +63,13 @@ class Session:
     def set(self, key, value):
         self.data.update({key : value})
 
+    def flash(self, key, default = None):
+        value = None
+        if key in self.data:
+            value = self.data[key]
+            del self.data[key]
+        else:
+            value = default
+        return value
+
 
