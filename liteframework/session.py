@@ -11,9 +11,11 @@ class Session:
         self.expire = expire
         session_uuid = Cookie.get_cookie(request, 'session', None)
         if session_uuid:
+            print 'Found session, loading'
             self.load(session_uuid, request)
         else:
             self.new(request)
+        print 'session data, ', self.data
         self.cleanup()
 
     def cleanup(self):
