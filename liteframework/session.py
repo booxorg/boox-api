@@ -42,7 +42,7 @@ class Session:
         file_path = os.path.join(App.storage_path, 'session', self.uuid)
         try:
             with open(file_path, 'wb') as f:
-                print 'Saving, '.self.__dict__
+                print 'Saving, ', self.__dict__
                 pickle.dump(self.__dict__, f)
         except Exception, e:
             print 'Failed to save session to file', repr(e)
