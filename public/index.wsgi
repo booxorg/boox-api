@@ -28,7 +28,8 @@ from liteframework.global_functions import *
 ###    Apache offsers control by calling this function and regains control after it finishes
 #####################################################################################
 
-def application(environ, start_response):   
+def application(environ, start_response): 
+    print '-------------------------->  REQUEST START'
     # Wrapper to set SCRIPT_NAME to actual mount point.
     environ['SCRIPT_NAME'] = posixpath.dirname(environ['SCRIPT_NAME'])
     if environ['SCRIPT_NAME'] == '/':
@@ -81,9 +82,11 @@ def application(environ, start_response):
     # Create session
     
     App.session = Session.Session(request, App.config.get('APP', 'session_expire_days'))
-    print 'UUID is', App.session.uuid
+    print '-> UUID: ', App.session.uuid
+    print '-> URL: ', App.request_url
 
     result = Routing.handle_request(request)
     App.session.save(request)
+    print '-------------------------->  REQUEST END'
     return result
 
