@@ -11,9 +11,11 @@ class Session:
         self.expire = expire
         session_uuid = Cookie.get_cookie(request, 'session', None)
         if session_uuid:
+            print 'Found session, loading'
             self.load(session_uuid, request)
         else:
             self.new(request)
+        print 'session data, ', self.data
         self.cleanup()
 
     def cleanup(self):
@@ -65,5 +67,14 @@ class Session:
             
     def set(self, key, value):
         self.data.update({key : value})
+
+    def flash(self, key, default = None):
+        value = None
+        if key in self.data:
+            value = self.data[key]
+            del self.data[key]
+        else:
+            value = default
+        return value
 
 
