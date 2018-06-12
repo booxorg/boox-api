@@ -27,6 +27,7 @@ class Session:
                 current_date = datetime.now()
                 diff = current_date - creation_date
                 if diff.days > self.expire:
+                    print 'Removing cache file: ', full
                     os.remove(full)
             except Exception, e:
                 print 'Unable to verify session file ', filename
@@ -41,6 +42,7 @@ class Session:
         file_path = os.path.join(App.storage_path, 'session', self.uuid)
         try:
             with open(file_path, 'wb') as f:
+                print 'Saving, ', self.__dict__
                 pickle.dump(self.__dict__, f)
         except Exception, e:
             print 'Failed to save session to file', repr(e)
@@ -52,6 +54,7 @@ class Session:
             with open(file_path, 'rb') as f:
                 tmp_dict = pickle.load(f)
                 self.__dict__.update(tmp_dict)
+                self.save(request)
         except Exception, e:
             print 'Failed', repr(e)
             self.new(request)
