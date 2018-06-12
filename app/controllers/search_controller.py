@@ -6,7 +6,6 @@ import liteframework.middleware.params as Params
 import liteframework.validator as Validator
 
 import app.models.book as Book
-import app.models.author_book as AuthorBook
 import app.middleware.token_valid as TokenCheck
 import book_controller as BookController
 import MySQLdb
