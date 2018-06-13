@@ -3,6 +3,7 @@ import liteframework.application as App
 import uuid as Unique
 import os
 import time
+import logging
 import pickle
 from datetime import datetime
 
@@ -11,11 +12,9 @@ class Session:
         self.expire = expire
         session_uuid = Cookie.get_cookie(request, 'session', None)
         if session_uuid:
-            print 'Found session, loading'
             self.load(session_uuid, request)
         else:
             self.new(request)
-        print 'session data, ', self.data
         self.cleanup()
 
     def cleanup(self):
@@ -27,10 +26,10 @@ class Session:
                 current_date = datetime.now()
                 diff = current_date - creation_date
                 if diff.days > self.expire:
-                    print 'Removing cache file: ', full
+                    loggger.debug('Removing cache file: %s' % (full))
                     os.remove(full)
             except Exception, e:
-                print 'Unable to verify session file ', filename
+                logging.exception('Unable to remove old session file')
             
     def new(self, request):
         self.uuid = str(Unique.uuid4())
@@ -42,10 +41,10 @@ class Session:
         file_path = os.path.join(App.storage_path, 'session', self.uuid)
         try:
             with open(file_path, 'wb') as f:
-                print 'Saving, ', self.__dict__
+                logging.debug('Saving session: %s' % (self.__dict__))
                 pickle.dump(self.__dict__, f)
         except Exception, e:
-            print 'Failed to save session to file', repr(e)
+            logging.exception('Failed to save session to file')
 
     def load(self, uuid, request):
         self.uuid = uuid
@@ -56,7 +55,7 @@ class Session:
                 self.__dict__.update(tmp_dict)
                 self.save(request)
         except Exception, e:
-            print 'Failed', repr(e)
+            logging.exception('Failed to load session to file')
             self.new(request)
 
     def get(self, key, default = None):
