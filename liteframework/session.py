@@ -11,8 +11,10 @@ from datetime import datetime
 class Session:
     def __init__(self, request, expire = 1):
         self.expire = expire
-        session_uuid = Cookie.get_cookie(request, 'session', None)
+        self.uuid = 'none'
+        self.data = None
         if App.config.get('APP', 'store_sessions') == 'True':
+            session_uuid = Cookie.get_cookie(request, 'session', None)
             if session_uuid:
                 self.load(session_uuid, request)
             else:
