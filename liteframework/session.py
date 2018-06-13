@@ -10,7 +10,7 @@ from datetime import datetime
 
 class Session:
     def __init__(self, request, expire = 1):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             self.expire = expire
             session_uuid = Cookie.get_cookie(request, 'session', None)
             if session_uuid:
@@ -20,7 +20,7 @@ class Session:
             self.cleanup()
 
     def cleanup(self):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             files_path = os.path.join(App.storage_path, 'session')
             for filename in os.listdir(files_path):
                 try:
@@ -35,13 +35,13 @@ class Session:
                     logging.exception('Unable to remove old session file')
             
     def new(self, request):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             self.uuid = str(Unique.uuid4())
             self.data = {}
             self.save(request)
 
     def save(self, request):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             Cookie.set_cookie(request, 'session', self.uuid)
             file_path = os.path.join(App.storage_path, 'session', self.uuid)
             try:
@@ -52,7 +52,7 @@ class Session:
                 logging.exception('Failed to save session to file')
 
     def load(self, uuid, request):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             self.uuid = uuid
             file_path = os.path.join(App.storage_path, 'session', self.uuid)
             try:
@@ -65,18 +65,18 @@ class Session:
                 self.new(request)
 
     def get(self, key, default = None):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             if key in self.data:
                 return self.data[key]
             else:
                 return default
             
     def set(self, key, value):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             self.data.update({key : value})
 
     def flash(self, key, default = None):
-        if App.config.get('APP', 'store_sessions') == True:
+        if App.config.get('APP', 'store_sessions') == 'True':
             value = None
             if key in self.data:
                 value = self.data[key]
