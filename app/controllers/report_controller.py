@@ -8,6 +8,7 @@ import app.models.user_book as UserBook
 import app.models.location as Location
 import app.models.exchange as Exchange
 import app.models.author as Author
+import logging
 
 @Routing.Route(
     url='/report/info', 
@@ -21,11 +22,11 @@ def general_info(variables={}, request={}):
     authors = 0
     nearby = 0
     try:
-        users = User.User().count()
-        connections = Exchange.Exchange().count()
-        locations = Location.Location().count()
-        books = Book.Book().count()
-        authors = Author.Author().count()
+        users = User.User().count().get()[0]['count']
+        connections = Exchange.Exchange().count().get()[0]['count']
+        locations = Location.Location().count().get()[0]['count']
+        books = Book.Book().count().get()[0]['count']
+        authors = Author.Author().count().get()[0]['count']
         nearby = 0
     except Exception, e:
         print str(e)

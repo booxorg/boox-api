@@ -77,8 +77,8 @@ class Model:
 
 	def count(self):
 		self.__query = "SELECT COUNT(*) FROM `%s`" % (self.table_name)
-		result = self.__execute(self.__query)
-		return result[0][0]
+		self.column_names = ['count']
+		return self
 
 	#Adds a where clause
 	def where(self, column_name, operator, value):

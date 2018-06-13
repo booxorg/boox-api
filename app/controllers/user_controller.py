@@ -12,6 +12,7 @@ import app.models.exchange as Exchange
 import app.models.token as Token
 import MySQLdb
 from datetime import datetime
+import logging
 
 @Routing.Route(
     url='/user', 
@@ -34,22 +35,24 @@ def user_info(variables={}, request={}):
         if not found_user:
             raise UserWarning('no such user')
         found_user = found_user[0]
+        book_count = UserBook.UserBook().count().where('USERID', '=', found_user['ID']).get()[0]
         user = {
             'id' : found_user['ID'],
             'username' : found_user['USERNAME'],
             'first_name' : found_user['FIRSTNAME'],
             'last_name' : found_user['LASTNAME'],
-            'email' : found_user['EMAIL']
+            'email' : found_user['EMAIL'],
+            'book_count' : book_count['count']
         }
 
     except UserWarning, e:
-        print 'user warining: ', repr(e)
+        logging.exception('User warning')
         return Controller.response_json({
             'status' :  'error',
             'message' : str(e)   
         })
     except Exception, e:
-        print 'fatal error: ', repr(e)
+        logging.exception('Fatal error')
         return Controller.response_json({
             'status' :  'error',
             'message' : 'fatal error occured'   
