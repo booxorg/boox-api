@@ -22,6 +22,9 @@ query = """DROP TABLE IF EXISTS EXCHANGES;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS TOKENS;"""
 cursor.execute(query)
+query = """DROP TABLE IF EXISTS NOTIFICATIONS;"""
+cursor.execute(query)
+
 
 query = """CREATE TABLE USERS (
 		   ID INT NOT NULL AUTO_INCREMENT,
@@ -56,20 +59,18 @@ query = """CREATE TABLE LOCATIONS (
 		   USERID INT,
 		   COUNTRY VARCHAR(100),
 		   CITY VARCHAR(100),
-		   VILLAGE VARCHAR(100),
 		   STREET VARCHAR(100),
-		   STREETNUMBER VARCHAR(10),
 		   PRIMARY KEY(ID));"""
 
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (1, "Romania", "Iasi", "", "Musatini", "55")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (1, "Romania", "Iasi", "Musatini")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (2, "Romania", "Iasi", "", "Plaiesilor", "55")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (2, "Romania", "Iasi", "Plaiesilor")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (3, "Romania", "Iasi", "", "Stejar", "41")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (3, "Romania", "Iasi", "Stejar")"""
 cursor.execute(query)
 
 
