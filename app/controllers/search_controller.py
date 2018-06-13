@@ -6,9 +6,11 @@ import liteframework.middleware.params as Params
 import liteframework.validator as Validator
 
 import app.models.book as Book
+import app.models.user_book as UserBook
 import app.middleware.token_valid as TokenCheck
 import book_controller as BookController
 import MySQLdb
+import logging
 from datetime import datetime
 
 @Routing.Route(
@@ -39,11 +41,12 @@ def search(variables={}, request={}):
     try:
         if not ok:
             raise UserWarning(error_message)
-        search_results = Book.Book().query('BOOKS.ID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'AUTHORS.NAME')\
+        search_results = Book.Book().query('BOOKS.ID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'BOOKS.COVER', 'AUTHORS.NAME')\
             .join('AUTHORS', 'AUTHORID', 'ID')\
             .where('BOOKS.title', 'REGEXP', '|'.join(keywords.split(',')))\
             .condition('AND', 'BOOKS.GENRE', 'REGEXP', '|'.join(genres.split(',')))\
             .condition('AND', 'AUTHORS.NAME', 'REGEXP', '|'.join(authors.split(',')))
+
 
         if before != '-':
             before = datetime.strptime(before, '%d-%m-%Y').strftime('%Y-%m-%d')
@@ -55,22 +58,30 @@ def search(variables={}, request={}):
             
         for search_result in search_results:
             book = {}
+            user_info = UserBook.UserBook().\
+                query('USERBOOKS.USERID', 'USERS.USERNAME')\
+                .join('USERS', 'USERID', 'ID')\
+                .where('BOOKID', '=', search_result['BOOKS.ID'])\
+                .get()[0]
+            book['user_id'] = user_info['USERBOOKS.USERID']
+            book['username'] = user_info['USERS.USERNAME']
             book['title'] = search_result['BOOKS.TITLE'].decode('cp1252')
             book['id'] = search_result['BOOKS.ID']
-            book['isbn'] = search_result['BOOKS.ISBN']
-            book['genre'] = search_result['BOOKS.GENRE']
+            book['isbn'] = search_result['BOOKS.ISBN'].decode('cp1252')
+            book['genre'] = search_result['BOOKS.GENRE'].decode('cp1252')
             book['expires'] = search_result['BOOKS.EXPIRES'].strftime('%d-%m-%Y')
             book['author'] = search_result['AUTHORS.NAME'].decode('cp1252')
+            book['cover'] = search_result['BOOKS.COVER'].decode('cp1252')
             result.append(book)
 
     except UserWarning, e:
-        print 'user warining: ', repr(e)
+        logging.exception('User warning')
         return Controller.response_json({
             'status' :  'error',
             'message' : str(e)   
         })
     except Exception, e:
-        print 'fatal error: ', repr(e)
+        logging.exception('Fatal error')
         return Controller.response_json({
             'status' :  'error',
             'message' : 'fatal error occured'   
