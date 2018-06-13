@@ -78,7 +78,7 @@ def search_external(variables={}, request={}):
     method='GET', 
     middleware=[
         TokenCheck.token_valid, 
-        Params.has_params('token', 'expires', 'genre', 'goodreads_id')
+        Params.has_params('token', 'expires', 'genre', 'goodreads_id', 'cover')
     ]
 )
 def add_book(variables={}, request={}):
@@ -96,7 +96,8 @@ def add_book(variables={}, request={}):
         #(author, r'^[a-zA-Z0-9 ,.\'-]+$', 'author value is invalid'),
         (genre, r'^(%s)$' % ('|'.join(genres)), 'genre value is invalid'),
         (expires, r'^([1-9]|([012][0-9])|(3[01]))\-([0]{0,1}[1-9]|1[012])\-\d\d\d\d$', 'expires value is invalid'),
-        (goodreads_id, r'^[0-9]|[1-9][0-9]+$', 'goodreads_id value is invalid')
+        (goodreads_id, r'^[0-9]|[1-9][0-9]+$', 'goodreads_id value is invalid'),
+        (cover, r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,}))$', 'cover url is invalid')
     ])
 
     try:

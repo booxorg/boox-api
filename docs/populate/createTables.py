@@ -16,8 +16,6 @@ query = """DROP TABLE IF EXISTS AUTHORS;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS USERBOOKS;"""
 cursor.execute(query)
-query = """DROP TABLE IF EXISTS COVERS;"""
-cursor.execute(query)
 query = """DROP TABLE IF EXISTS HISTORY;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS EXCHANGES;"""
@@ -101,22 +99,22 @@ query = """CREATE TABLE BOOKS (
 		   GENRE VARCHAR(10),
 		   EXPIRES DATE,
 		   AUTHORID INT,
-		   COVERID INT,
+		   COVER VARCHAR(100),
 		   DELETED BOOLEAN,
 		   PRIMARY KEY(ID));"""
 
 cursor.execute(query)
 
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, COVERID, DELETED)
-		   VALUES(1111111111111, "Abstract bombs", "SCI-FI", "2018-10-20", 1, 1, 0)"""
+query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
+		   VALUES(1111111111111, "Abstract bombs", "SCI-FI", "2018-10-20", 1, 0)"""
 cursor.execute(query)
 
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, COVERID, DELETED)
-		   VALUES(2222222222222, "Do you even lift, bro?", "FITNESS", "2018-10-21", 2, 2, 0)"""
+query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
+		   VALUES(2222222222222, "Do you even lift, bro?", "FITNESS", "2018-10-21", 2, 0)"""
 cursor.execute(query)
 
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, COVERID, DELETED)
-		   VALUES(3333333333333, "How to treat gurls", "LIFESTYLE", "2018-10-23", 3, 3, 0)"""
+query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
+		   VALUES(3333333333333, "How to treat gurls", "LIFESTYLE", "2018-10-23", 3, 0)"""
 cursor.execute(query)
 
 
@@ -151,13 +149,6 @@ cursor.execute(query)
 
 query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (3, 3)"""
 cursor.execute(query)
-
-query = """CREATE TABLE COVERS (
-		   ID INT NOT NULL AUTO_INCREMENT,
-		   COVER MEDIUMBLOB,
-		   PRIMARY KEY(ID));"""
-cursor.execute(query)
-
 
 query = """CREATE TABLE HISTORY (
 		   ID INT NOT NULL AUTO_INCREMENT,
