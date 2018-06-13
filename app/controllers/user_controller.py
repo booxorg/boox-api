@@ -36,13 +36,37 @@ def user_info(variables={}, request={}):
             raise UserWarning('no such user')
         found_user = found_user[0]
         book_count = UserBook.UserBook().count().where('USERID', '=', found_user['ID']).get()[0]
+        books_query = Book.Book()\
+            .query('BOOKS.ID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 
+            'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'BOOKS.COVER', 'BOOKS.DELETED', 'AUTHORS.NAME')\
+            .join('AUTHORS', 'AUTHORID', 'ID')\
+            .join('USERBOOKS', 'ID', 'BOOKID')\
+            .where('USERBOOKS.USERID', '=', found_user['ID']).get()
+
+        books = []
+        for book_result in books_query:
+            book = {}
+            book['user_id'] = found_user['ID']
+            book['username'] = found_user['USERNAME']
+            book['title'] = book_result['BOOKS.TITLE'].decode('cp1252')
+            book['id'] = book_result['BOOKS.ID']
+            book['isbn'] = book_result['BOOKS.ISBN'].decode('cp1252')
+            book['genre'] = book_result['BOOKS.GENRE'].decode('cp1252')
+            book['expires'] = book_result['BOOKS.EXPIRES'].strftime('%d-%m-%Y')
+            book['author'] = book_result['AUTHORS.NAME'].decode('cp1252')
+            if book_result['BOOKS.COVER']:
+                book['cover'] = book_result['BOOKS.COVER'].decode('cp1252')
+            else:
+                book['cover'] = ''
+            books.append(book)
         user = {
             'id' : found_user['ID'],
             'username' : found_user['USERNAME'],
             'first_name' : found_user['FIRSTNAME'],
             'last_name' : found_user['LASTNAME'],
             'email' : found_user['EMAIL'],
-            'book_count' : book_count['count']
+            'book_count' : book_count['count'],
+            'books' : books
         }
 
     except UserWarning, e:
