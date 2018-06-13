@@ -2,6 +2,7 @@ import liteframework.util as Util
 import liteframework.application as App
 import liteframework.controller as Controller
 import copy
+import logging
 
 
 class RouteObject:
@@ -67,7 +68,12 @@ def route_url(request):
     return Controller.response_not_found()
 
 def handle_request(request):
-    output, content, status = route_url(request)
+    try:
+        output, content, status = route_url(request)
+    except Exception, e:
+        print 'aaah'
+        logging.exception('Failed to execute request')
+        raise   
     response_headers = output.items()
 
     for cookie in request.new_cookies.values():

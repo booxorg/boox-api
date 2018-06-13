@@ -2,6 +2,7 @@
 import sys, os
 import monitor
 import posixpath
+import logging
 monitor.start(interval=1.0)
 monitor.track(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -29,7 +30,7 @@ from liteframework.global_functions import *
 #####################################################################################
 
 def application(environ, start_response): 
-    print '-------------------------->  REQUEST START'
+    
     # Wrapper to set SCRIPT_NAME to actual mount point.
     environ['SCRIPT_NAME'] = posixpath.dirname(environ['SCRIPT_NAME'])
     if environ['SCRIPT_NAME'] == '/':
@@ -54,9 +55,15 @@ def application(environ, start_response):
     App.cookies_pub, App.cookies_prv = Encryption.import_key('cookie')
     App.config = ConfigParser.ConfigParser()
     App.config.read(os.path.join(App.base_path, 'config.ini'))
+    logging.basicConfig(
+        filename=os.path.join(App.base_path, 'application.log'),
+        level=logging.DEBUG,
+        format='%(asctime)s %(message)s'
+    )
     # Globals init finish
 
-    
+    logging.debug('-------------------------->  REQUEST START')
+       
     # Request build
     request = Routing.Request()
     request.port = environ.get('SERVER_PORT', 80)
@@ -82,11 +89,11 @@ def application(environ, start_response):
     # Create session
     
     App.session = Session.Session(request, App.config.get('APP', 'session_expire_days'))
-    print '-> UUID: ', App.session.uuid
-    print '-> URL: ', App.request_url
+    logging.debug('-> UUID: %s' % (App.session.uuid))
+    logging.debug('-> URL: %s' % (App.request_url))
 
     result = Routing.handle_request(request)
     App.session.save(request)
-    print '-------------------------->  REQUEST END'
+    logging.debug('-------------------------->  REQUEST END')
     return result
 
