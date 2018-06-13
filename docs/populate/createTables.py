@@ -97,7 +97,7 @@ cursor.execute(query)
 query = """CREATE TABLE BOOKS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   ISBN VARCHAR(13),
-		   TITLE VARCHAR(30),
+		   TITLE VARCHAR(100),
 		   GENRE VARCHAR(10),
 		   EXPIRES DATE,
 		   AUTHORID INT,

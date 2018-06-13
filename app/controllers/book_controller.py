@@ -13,6 +13,7 @@ import app.models.token as Token
 import app.api.goodreads_api as Goodreads
 import MySQLdb
 from datetime import datetime
+import logging
 
 genres = [
     'Comedy',
@@ -138,19 +139,19 @@ def add_book(variables={}, request={}):
         values['author_id'] = created_author['ID']
         
     except UserWarning, e:
-        print 'User Warning: ', str(e)
+        logging.exception('User Warning')
         return Controller.response_json({
             'status' : 'error',
             'message' : str(e)    
         })
     except (MySQLdb.Error, MySQLdb.Warning), e:
-        print 'DB exception: ', str(e)
+        logging.exception('DB exception')
         return Controller.response_json({
             'status' : 'error',
             'message' : 'there are problems connecting to server database'  
         })
     except Exception, e:
-        print 'Fatal exception: ', str(e)
+        logging.exception('Fatal exception')
         return Controller.response_json({
             'status' : 'error',
             'message' : 'fatal error occured'  
