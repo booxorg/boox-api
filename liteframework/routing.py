@@ -75,7 +75,7 @@ def handle_request(request):
         raise   
     response_headers = output.items()
     response_headers.append(('Cache-Control', 'no-store'))
-    print response_headers
+    response_headers.append(('Access-Control-Allow-Origin', '*'))
     for cookie in request.new_cookies.values():
         response_headers.append(('Set-Cookie', cookie.OutputString()))
     App.start_response(status, response_headers)
