@@ -48,7 +48,7 @@ class Session:
             file_path = os.path.join(App.storage_path, 'session', self.uuid)
             try:
                 with open(file_path, 'wb') as f:
-                    logging.debug('Saving session: %s' % (self.__dict__))
+                    logging.debug('Saving session %s: %s, to file: %s' % (self.uuid, self.__dict__, file_path))
                     pickle.dump(self.__dict__, f)
             except Exception, e:
                 logging.exception('Failed to save session to file')
@@ -63,7 +63,7 @@ class Session:
                     self.__dict__.update(tmp_dict)
                     self.save(request)
             except Exception, e:
-                logging.exception('Failed to load session to file')
+                logging.exception('Failed to load session to file: %s' % (file_path))
                 self.new(request)
 
     def get(self, key, default = None):
@@ -85,6 +85,7 @@ class Session:
                 del self.data[key]
             else:
                 value = default
+            logging.debug('Flashing %s = %s' % (key, value))
             return value
 
 

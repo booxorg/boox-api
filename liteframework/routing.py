@@ -71,11 +71,11 @@ def handle_request(request):
     try:
         output, content, status = route_url(request)
     except Exception, e:
-        print 'aaah'
         logging.exception('Failed to execute request')
         raise   
     response_headers = output.items()
-
+    response_headers.append(('Cache-Control', 'no-store'))
+    print response_headers
     for cookie in request.new_cookies.values():
         response_headers.append(('Set-Cookie', cookie.OutputString()))
     App.start_response(status, response_headers)
