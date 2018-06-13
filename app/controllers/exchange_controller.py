@@ -58,17 +58,16 @@ def propose_exchange(variables={}, request={}):
 def list_offers(variables={}, request={}):
 	status = 'success'
 	message = ''
+	exchange_status = ''
 
 	token = request.params['token']
 
 	user_dict = Token.Token().query("USERID").where("TOKEN", "=", token).get()
-	exchange_dict = Exchange.Exchange().query("USERNAME", "FIRSTNAME", "LASTNAME", "BOOKID", "TITLE", "GENRE"). \
-					join("USERS", "RECEIVERID", "ID"). \
-					join("BOOKS", "BOOKID", "ID"). \
+	exchange_dict = Exchange.Exchange().query("EXCHANGES.OWNERID", "EXCHANGES.RECEIVERID", "EXCHANGES.BOOKID1", "EXCHANGES.BOOKID2", "EXCHANGES.ISFINISHED"). \
 					where("EXCHANGES.OWNERID", "=", user_dict[0]['USERID']). \
-					condition("AND", "EXCHANGES.ISFINISHED", "=", 0).get()
+					condition("OR", "EXCHANGES.RECEIVERID", "=", user_dict[0]['USERID']).get()
 
-	if(not exchange_dict):
+	if not exchange_dict:
 		status = 'succes'
 		message = 'no entries found'
 		result = { 'status' : status, 'message' : message}
@@ -76,7 +75,23 @@ def list_offers(variables={}, request={}):
 		status = 'succes'
 		message = 'entries found'
 		response = exchange_dict
+
+		for exchange in exchange_dict:
+			if exchange['EXCHANGES.ISFINISHED'] == 1:				
+				exchange['exchange_status'] = 'exchange_finished'
+			else:
+				if exchange['EXCHANGES.BOOKID2'] == None:
+					exchange['exchange_status'] = 'pending_match'
+				else:
+					exchange['exchange_status'] = 'request_sent'
+
+			if user_dict[0]['USERID'] == exchange['EXCHANGES.OWNERID']:
+				exchange['user_status'] = 'owner'
+			else:
+				exchange['user_status'] = 'receiver'
+		
 		result = {'status' : status, 'message' : message, 'response' : response}
+
 
 	return Controller.response_json(result)
 
