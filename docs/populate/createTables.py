@@ -22,6 +22,8 @@ query = """DROP TABLE IF EXISTS EXCHANGES;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS TOKENS;"""
 cursor.execute(query)
+query = """DROP TABLE IF EXISTS NOTIFICATIONS;"""
+cursor.execute(query)
 
 query = """CREATE TABLE USERS (
 		   ID INT NOT NULL AUTO_INCREMENT,
@@ -56,20 +58,18 @@ query = """CREATE TABLE LOCATIONS (
 		   USERID INT,
 		   COUNTRY VARCHAR(100),
 		   CITY VARCHAR(100),
-		   VILLAGE VARCHAR(100),
 		   STREET VARCHAR(100),
-		   STREETNUMBER VARCHAR(10),
 		   PRIMARY KEY(ID));"""
 
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (1, "Romania", "Iasi", "", "Musatini", "55")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (1, "Romania", "Iasi", "Musatini")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (2, "Romania", "Iasi", "", "Plaiesilor", "55")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (2, "Romania", "Iasi", "Plaiesilor")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (3, "Romania", "Iasi", "", "Stejar", "41")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (3, "Romania", "Iasi", "Stejar")"""
 cursor.execute(query)
 
 
@@ -92,8 +92,21 @@ query = """INSERT INTO PREFERENCES(USERID, PREFERENCETYPE, PREFERENCE) VALUES (3
 cursor.execute(query)
 
 
+query = """CREATE TABLE EXCHANGES (
+		   ID INT NOT NULL AUTO_INCREMENT,
+		   OWNERID INT,
+		   RECEIVERID INT,
+		   BOOKID1 INT,
+		   BOOKID2 INT,
+		   EXCHANGEDATE DATE,
+		   ISFINISHED BOOLEAN,
+		   HASSUCCEEDED BOOLEAN,
+		   PRIMARY KEY(ID));"""
+cursor.execute(query)
+
 query = """CREATE TABLE BOOKS (
 		   ID INT NOT NULL AUTO_INCREMENT,
+		   GOODREADSID INT,
 		   ISBN VARCHAR(13),
 		   TITLE VARCHAR(100),
 		   GENRE VARCHAR(10),
@@ -104,6 +117,7 @@ query = """CREATE TABLE BOOKS (
 		   PRIMARY KEY(ID));"""
 
 cursor.execute(query)
+
 
 query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
 		   VALUES(1111111111111, "Abstract bombs", "SCI-FI", "2018-10-20", 1, 0)"""
@@ -154,18 +168,6 @@ query = """CREATE TABLE HISTORY (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   USERID INT,
 		   BOOKID INT,
-		   PRIMARY KEY(ID));"""
-cursor.execute(query)
-
-
-query = """CREATE TABLE EXCHANGES (
-		   ID INT NOT NULL AUTO_INCREMENT,
-		   OWNERID INT,
-		   RECEIVERID INT,
-		   BOOKID INT,
-		   EXCHANGEDATE DATE,
-		   ISFINISHED BOOLEAN,
-		   HASSUCCEEDED BOOLEAN,
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 

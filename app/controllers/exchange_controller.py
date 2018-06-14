@@ -34,7 +34,7 @@ def propose_exchange(variables={}, request={}):
 		else:
 			dict_exchange = Exchange.Exchange().query('ID').where("OWNERID", "=", dict_owner[0]['USERID']). \
 							condition("AND", "RECEIVERID", "=", dict_receiver[0]['USERID']). \
-							condition("AND", "BOOKID", "=", book_id).get()
+							condition("AND", "BOOKID1", "=", book_id).get()
 			if(dict_exchange):
 				status = 'error'
 				message = 'the exchange already exists'

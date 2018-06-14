@@ -6,6 +6,7 @@ import liteframework.middleware.params as Params
 import app.middleware.token_valid as TokenCheck
 import liteframework.validator as Validator
 
+import app.models.user as User
 import app.models.book as Book
 import app.models.user_book as UserBook
 import app.models.author as Author
@@ -20,7 +21,8 @@ genres = [
     'Drama',
     'Romance',
     'SciFi',
-    'Cooking'
+    'Cooking',
+    'Detective'
 ]
 
 
@@ -35,6 +37,69 @@ def get_genres(variables={}, request={}):
         }
     }
     return Controller.response_json(result)
+
+def get_book_by_id(id):
+    books_query = Book.Book()\
+            .query('BOOKS.ID', 'BOOKS.GOODREADSID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 
+            'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'BOOKS.COVER', 'BOOKS.DELETED', 'AUTHORS.NAME', 'USERBOOKS.USERID')\
+            .join('AUTHORS', 'AUTHORID', 'ID')\
+            .join('USERBOOKS', 'ID', 'BOOKID')\
+            .where('BOOKS.ID', '=', id).get()
+    if books_query:
+        books_query = books_query[0]
+    else:
+        return {}
+
+    user = User.User().query('*').where('ID', '=', books_query['USERBOOKS.USERID']).get()[0]
+    book = {}
+    book['user_id'] = user['ID']
+    book['username'] = user['USERNAME']
+    book['title'] = books_query['BOOKS.TITLE'].decode('cp1252')
+    book['goodreads_id'] = books_query['BOOKS.GOODREADSID']
+    book['id'] = books_query['BOOKS.ID']
+    book['isbn'] = books_query['BOOKS.ISBN'].decode('cp1252')
+    book['genre'] = books_query['BOOKS.GENRE'].decode('cp1252')
+    book['expires'] = books_query['BOOKS.EXPIRES'].strftime('%d-%m-%Y')
+    book['author'] = books_query['AUTHORS.NAME'].decode('cp1252')
+    if books_query['BOOKS.COVER']:
+        book['cover'] = books_query['BOOKS.COVER'].decode('cp1252')
+    else:
+        book['cover'] = ''
+    return book
+
+@Routing.Route(url='/book', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token','id')])
+def get_book(variables={}, request={}):
+    id = request.params['id']
+    ok, error_message = Validator.validate([
+        (id, r'^([0-9]|[1-9][0-9]+)$', 'limit value is invalid, should be a positive number')
+    ])
+
+    result = None
+    try:
+        if not ok:
+            raise UserWarning(error_message)
+        result = get_book_by_id(int(id))
+        if not result:
+            raise UserWarning('book not found')
+    except UserWarning, e:
+        print 'user warining: ', repr(e)
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : str(e)   
+        })
+
+    except Exception, e:
+        print 'fatal error: ', repr(e)
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : 'fatal error occured'   
+        })
+
+    return Controller.response_json({
+        'status' : 'success',
+        'message' : 'search sucessful',
+        'response' : result    
+    })
 
 @Routing.Route(url='/book/search', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token','query')])
 def search_external(variables={}, request={}):
@@ -118,6 +183,7 @@ def add_book(variables={}, request={}):
         datetime_object = datetime.strptime(expires, '%d-%m-%Y')
         created_book = Book.Book().insert({
             'ISBN' : book['isbn'],
+            'GOODREADSID' : int(goodreads_id),
             'TITLE' : book['title'],
             'GENRE' : genre,
             'COVER' : book['image_url'],

@@ -27,20 +27,15 @@ def notify_users(token, bookname, bookid):
 
 	owncountry = owner_location_dict[0]['COUNTRY']
 	owncity = owner_location_dict[0]['CITY']
-	ownvillage = owner_location_dict[0]['VILLAGE']
 	ownstreet = owner_location_dict[0]['STREET']
-	ownstreetnr = owner_location_dict[0]['STREETNUMBER']
 
 
-
-	if owncountry == "" or owncity == "" or ownvillage == "" or ownstreet == "":
+	if owncountry == "" or owncity == "" or ownstreet == "":
 		status = 'error'
 		message = 'the sender is missing location information'
 	else:
 		apiURL = "https://maps.google.com/maps/api/geocode/json?address="
-		apiURL = "%s %s,%s,%s,%s" % (apiURL, owncountry, owncity, ownvillage, ownstreet)
-		if ownstreetnr != "":
-			apiURL = "%s %s" % (apiURL, ownstreetnr)
+		apiURL = "%s %s,%s,%s" % (apiURL, owncountry, owncity, ownstreet)
 		apiURL = "%s&key=%s" % (apiURL, App.config.get('GOOGLE', 'geocoding_key'))
 
 		api_response = requests.get(apiURL)
@@ -59,19 +54,15 @@ def notify_users(token, bookname, bookid):
 												      condition("AND","PREFERENCE", "=", bookname).get()
 
 			for preference in dict_preference:
-				location_dict = Location.Location().query("COUNTRY", "CITY", "VILLAGE", "STREET", "STREETNUMBER"). \
+				location_dict = Location.Location().query("COUNTRY", "CITY", "STREET"). \
 													where("USERID", "=", preference['USERID']).get()
 				reccountry = location_dict[0]['COUNTRY']
 				reccity = location_dict[0]['CITY']
-				recvillage = location_dict[0]['VILLAGE']
 				recstreet = location_dict[0]['STREET']
-				recstreetnr = location_dict[0]['STREETNUMBER']
 
-				if reccountry != "" and reccity != "" and recvillage != "" and recstreet != "":
+				if reccountry != "" and reccity != "" and recstreet != "":
 					apiURL = "https://maps.google.com/maps/api/geocode/json?address="
-					apiURL = "%s %s,%s,%s,%s" % (apiURL, reccountry, reccity, recvillage, recstreet)
-					if ownstreetnr != "":
-						apiURL = "%s %s" % (apiURL, recstreetnr)
+					apiURL = "%s %s,%s,%s" % (apiURL, reccountry, reccity, recstreet)
 					apiURL = "%s&key=%s" % (apiURL, App.config.get('GOOGLE', 'geocoding_key'))
 
 					api_response = requests.get(apiURL)

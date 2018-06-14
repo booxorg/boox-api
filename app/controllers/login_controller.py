@@ -34,7 +34,7 @@ def register(variables={}, request={}):
             status = 'success'
 
     if status == 'success':
-        response = { 'token' : response_dict_token[0]['TOKEN'] }
+        response = { 'token' : response_dict_token[0]['TOKEN'], 'id' : response_dict_user[0]['ID'] }
         result = {
             'status' : status,
             'message' : message,
