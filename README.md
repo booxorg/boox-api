@@ -11,16 +11,18 @@ The API returns `JSON` objects as a response with the following format:
 
 ### `/genres`
 Returns all the available and allowed Genres for adding books
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
-| None |
+| None | None | None |
 
 | Return value  | Description | Type |
-|----------------|-------------|------|
-| genres | Contains a list of strings naming all the allowed Genres | List of strings
+|---------------|-------------|------|
+| genres | Contains a list of strings naming all the allowed Genres | List of strings |
 
 ### `/book`
 Returns all the information about a book given its id
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -36,10 +38,11 @@ Returns all the information about a book given its id
 | isbn | Book's ISBN | String |
 | genre | Book's genre | String |
 | expires | Expiration date of the offer | Date |
-| author | Book's author |
+| author | Book's author | String |
 
 ### `/book/search`
 Returns all the information about a book given its full or partial title. Will Fetch Goodreads API
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -57,6 +60,7 @@ Returns all the information about a book given its full or partial title. Will F
 
 ### `/book/create`
 Adds a new book to the offers database, using its goodreads_id, genre and expires
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -73,6 +77,7 @@ Adds a new book to the offers database, using its goodreads_id, genre and expire
 
 ### `/search`
 Searches books in the database, using multiple filters as `authors`, `genres`,`location`
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -81,6 +86,8 @@ Searches books in the database, using multiple filters as `authors`, `genres`,`l
 | genres | Genre names separated by commas | String |
 | before | The expire date should come `before` this one, to get a match | Date |
 | after | The expire date should comd `after` this one, to get a match | Date |
+
+Returns an array of `book` objects with the following format:
 
 | Return value  | Description | Type |
 |----------------|-------------|------|
@@ -92,4 +99,52 @@ Searches books in the database, using multiple filters as `authors`, `genres`,`l
 | isbn | Book's ISBN | String |
 | genre | Book's genre | String |
 | expires | Expiration date of the offer | Date |
-| author | Book's author |
+| author | Book's author | String | 
+
+### `/recommend`
+Pulls from the recommendation engine the most appropriate books to show to the user
+
+| Parameter name | Description | Type |
+|----------------|-------------|------|
+| token | User identification token | String |
+
+Returns an array of `book` objects with the following format:
+
+| Return value  | Description | Type |
+|----------------|-------------|------|
+| user_id | ID of the book's owner | Integer |
+| username | Username of the book's owner | String |
+| title | Book's title | String |
+| goodreads_id | Id of the book as stated by Goodreads API | Integer |
+| id | Id of the book in BooX database | Integer |
+| isbn | Book's ISBN | String |
+| genre | Book's genre | String |
+| expires | Expiration date of the offer | Date |
+| author | Book's author | String | 
+
+### `/register`
+Registers a new user with the given parameters
+| Parameter name | Description | Type |
+|----------------|-------------|------|
+| token | User identification token | String |
+| username | Username | String |
+| password | Password | String |
+| cpassword | Confirm password | String |
+| fname | First name of the user | String |
+| lname | Last name of the user | String |
+| email | User email  | String |
+
+Doesn't return anything.
+
+### `/login`
+Verifies user credentials and return an identification token
+| Parameter name | Description | Type |
+|----------------|-------------|------|
+| username | Username | String |
+| password | Password | String |
+
+| Return value  | Description | Type |
+|----------------|-------------|------|
+| token | The identification token that can be used in other API calls | String |
+| id | The user id | Integer |
+
