@@ -71,7 +71,7 @@ def get_book_by_id(id):
 def get_book(variables={}, request={}):
     id = request.params['id']
     ok, error_message = Validator.validate([
-        (id, r'^([0-9]|[1-9][0-9]+)$', 'limit value is invalid, should be a positive number')
+        (id, r'^([0-9]|[1-9][0-9]+)$', 'id value is invalid, should be a positive number')
     ])
 
     result = None
