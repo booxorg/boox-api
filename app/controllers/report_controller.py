@@ -2,6 +2,7 @@ import liteframework.application as App
 import liteframework.controller as Controller 
 import liteframework.routing as Routing 
 
+import book_controller as BookController
 import app.models.user as User
 import app.models.book as Book
 import app.models.user_book as UserBook
@@ -20,14 +21,14 @@ def general_info(variables={}, request={}):
     locations = 0
     books = 0
     authors = 0
-    nearby = 0
+    genres = 0
     try:
         users = User.User().count().get()[0]['count']
         connections = Exchange.Exchange().count().get()[0]['count']
         locations = Location.Location().count().get()[0]['count']
         books = Book.Book().count().get()[0]['count']
         authors = Author.Author().count().get()[0]['count']
-        nearby = 0
+        genres = len(BookController.genres)
     except Exception, e:
         print str(e)
         pass
@@ -41,6 +42,6 @@ def general_info(variables={}, request={}):
             'locations' : locations,
             'books' : books,
             'authors' : authors,
-            'nearby' : nearby
+            'genres' : genres
         }    
     })
