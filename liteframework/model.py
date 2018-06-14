@@ -89,7 +89,7 @@ class Model:
 		return self
 
 	def whereAll(self, values):
-		self.__query += 'WHERE ';
+		self.__query += ' WHERE ';
 		preps = []
 		for (name, operator, value) in values:
 			if(isinstance(value, basestring)):

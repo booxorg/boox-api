@@ -2,6 +2,7 @@ import urllib2
 import xmltodict
 from datetime import datetime
 import liteframework.application as App
+import logging
 
 def work_xml_adaptor(api_work, limit):
     books = []
@@ -32,10 +33,13 @@ def work_xml_adaptor(api_work, limit):
 
 def book_xml_adaptor(api_book):
     book = {}
+    #logging.debug(api_book);
     try:
         book['goodreads_id'] = int(api_book['id'])
         book['title'] = api_book['title']
         book['isbn'] = api_book['isbn']
+        if not book['isbn']:
+            book['isbn'] = ''
         book['image_url'] = api_book['image_url']
         book['small_image_url'] = api_book['small_image_url']
         book['publication_date'] = '{}-{}-{}'.format(
@@ -43,14 +47,21 @@ def book_xml_adaptor(api_book):
             api_book['publication_month'], 
             api_book['publication_year']
         )
-        book['author'] = api_book['authors']['author'][0]['name']
-    except:
+        if (isinstance(api_book['authors'], (list,))):
+            book['author'] = api_book['authors']['author'][0]['name']
+        else:
+            book['author'] = api_book['authors']['author']['name']
+    except Exception, e:
+        logging.exception('Invalid book from api')
         return dict()
+
+    logging.debug(book)
     return book
 
 def request_search(query, limit):
     key = App.config.get('GOODREADS', 'key')
     goodreads_api = 'https://www.goodreads.com/search/index.xml?key={}&q={}&search[title]'.format(key, query)
+
     api_response = urllib2.urlopen(goodreads_api)
     if not api_response:
         raise UserWarning('unable to request goodreads api')
