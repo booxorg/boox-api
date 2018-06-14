@@ -38,20 +38,6 @@ query = """CREATE TABLE USERS (
 
 cursor.execute(query)
 
-query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("armandosexyguy", "$2b$12$L5/Ow/BUmwE7cg51ZBCYZe3SF/jmw3dFfqtQrRcjQ/CW79fknbFWW",
-		   		  "$2b$12$L5/Ow/BUmwE7cg51ZBCYZe", "Armando", "Ghedon", "garmando@gmail.com", 0)""" #password is password
-cursor.execute(query)
-
-query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("proteinmuscleman29", "$2b$12$HhH5LGXEqQF9KuAm4pJCjOCch6wifMKQY06trbHBcDzpZ8plYmZK6",
-		   		  "$2b$12$HhH5LGXEqQF9KuAm4pJCjO", "Muscolo", "Mister", "mmuscolo@gmail.com", 0)""" #password is prafuri
-cursor.execute(query)
-
-query = """INSERT INTO USERS(USERNAME, PASSWORD, SALT, FIRSTNAME, LASTNAME, EMAIL, ISADMINISTRATOR)
-		   VALUES("ladiesman69", "$2b$12$6KfM2W6iFUlnbEEcBPkB8.cSXXv8qgmJ.0KSbTlDwFeEKch9lJrua",
-		   		  "$2b$12$6KfM2W6iFUlnbEEcBPkB8.", "Casanova", "Amantu", "gigolou@gmail.com", 0)""" #password is boner
-cursor.execute(query)
 
 query = """CREATE TABLE LOCATIONS (
 		   ID INT NOT NULL AUTO_INCREMENT,
@@ -80,15 +66,6 @@ query = """CREATE TABLE PREFERENCES (
 		   PREFERENCE VARCHAR(20),
 		   PRIMARY KEY(ID));"""
 
-cursor.execute(query)
-
-query = """INSERT INTO PREFERENCES(USERID, PREFERENCETYPE, PREFERENCE) VALUES (1, "GENRE", "SCI-FI")"""
-cursor.execute(query)
-
-query = """INSERT INTO PREFERENCES(USERID, PREFERENCETYPE, PREFERENCE) VALUES (2, "GENRE", "FITNESS")"""
-cursor.execute(query)
-
-query = """INSERT INTO PREFERENCES(USERID, PREFERENCETYPE, PREFERENCE) VALUES (3, "GENRE", "ROMANCE")"""
 cursor.execute(query)
 
 
@@ -125,30 +102,12 @@ query = """CREATE TABLE AUTHORS (
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 
-query = """INSERT INTO AUTHORS(NAME) VALUES ("BOMBERMANE J. PHILLIPS")"""
-cursor.execute(query)
-
-query = """INSERT INTO AUTHORS(NAME) VALUES ("BUFFY MCBUFFSON")"""
-cursor.execute(query)
-
-query = """INSERT INTO AUTHORS(NAME) VALUES ("ADA LOVE")"""
-cursor.execute(query)
-
 
 query = """CREATE TABLE USERBOOKS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   BOOKID INT,
 		   USERID INT,
 		   PRIMARY KEY(ID));"""
-cursor.execute(query)
-
-query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (1, 1)"""
-cursor.execute(query)
-
-query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (2, 2)"""
-cursor.execute(query)
-
-query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (3, 3)"""
 cursor.execute(query)
 
 query = """CREATE TABLE HISTORY (

@@ -8,6 +8,7 @@ import app.models.user_book as UserBook
 import app.models.exchange as Exchange
 import app.models.book as Book
 import datetime
+import logging
 
 @Routing.Route(url='/exchange/propose', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token', 'bookid')])
 def propose_exchange(variables={}, request={}):
@@ -27,7 +28,7 @@ def propose_exchange(variables={}, request={}):
 	else:
 		dict_receiver = Token.Token().query("USERID").where("TOKEN", "=", token).get()
 		dict_owner = UserBook.UserBook().query("USERID").where("BOOKID", "=", book_id).get()
-
+		logging.debug(dict_owner)
 		if(dict_receiver[0]['USERID'] == dict_owner[0]['USERID']):
 			status = 'error'
 			message = 'users cannot send requests to themselves'
