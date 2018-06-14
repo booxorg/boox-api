@@ -39,7 +39,7 @@ def user_info(variables={}, request={}):
         found_user = found_user[0]
         book_count = UserBook.UserBook().count().where('USERID', '=', found_user['ID']).get()[0]
         books_query = Book.Book()\
-            .query('BOOKS.ID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 
+            .query('BOOKS.ID', 'BOOKS.GOODREADSID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 
             'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'BOOKS.COVER', 'BOOKS.DELETED', 'AUTHORS.NAME')\
             .join('AUTHORS', 'AUTHORID', 'ID')\
             .join('USERBOOKS', 'ID', 'BOOKID')\
@@ -51,6 +51,7 @@ def user_info(variables={}, request={}):
             book['user_id'] = found_user['ID']
             book['username'] = found_user['USERNAME']
             book['title'] = book_result['BOOKS.TITLE'].decode('cp1252')
+            book['goodreads_id'] = book_result['BOOKS.GOODREADSID']
             book['id'] = book_result['BOOKS.ID']
             book['isbn'] = book_result['BOOKS.ISBN'].decode('cp1252')
             book['genre'] = book_result['BOOKS.GENRE'].decode('cp1252')

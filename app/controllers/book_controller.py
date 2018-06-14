@@ -118,6 +118,7 @@ def add_book(variables={}, request={}):
         datetime_object = datetime.strptime(expires, '%d-%m-%Y')
         created_book = Book.Book().insert({
             'ISBN' : book['isbn'],
+            'GOODREADSID' : int(goodreads_id),
             'TITLE' : book['title'],
             'GENRE' : genre,
             'COVER' : book['image_url'],

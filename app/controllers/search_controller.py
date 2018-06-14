@@ -41,7 +41,7 @@ def search(variables={}, request={}):
     try:
         if not ok:
             raise UserWarning(error_message)
-        search_results = Book.Book().query('BOOKS.ID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'BOOKS.COVER', 'AUTHORS.NAME')\
+        search_results = Book.Book().query('BOOKS.ID', 'BOOKS.GOODREADSID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'BOOKS.COVER', 'AUTHORS.NAME')\
             .join('AUTHORS', 'AUTHORID', 'ID')\
             .where('BOOKS.title', 'REGEXP', '|'.join(keywords.split(',')))\
             .condition('AND', 'BOOKS.GENRE', 'REGEXP', '|'.join(genres.split(',')))\
@@ -65,6 +65,7 @@ def search(variables={}, request={}):
                 .get()[0]
             book['user_id'] = user_info['USERBOOKS.USERID']
             book['username'] = user_info['USERS.USERNAME']
+            book['goodreads_id'] = search_result['BOOKS.GOODREADSID']
             book['title'] = search_result['BOOKS.TITLE'].decode('cp1252')
             book['id'] = search_result['BOOKS.ID']
             book['isbn'] = search_result['BOOKS.ISBN'].decode('cp1252')
