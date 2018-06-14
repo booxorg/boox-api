@@ -11,6 +11,7 @@ The API returns `JSON` objects as a response with the following format:
 
 ### `/genres`
 Returns all the available and allowed Genres for adding books
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | None | None | None |
@@ -21,6 +22,7 @@ Returns all the available and allowed Genres for adding books
 
 ### `/book`
 Returns all the information about a book given its id
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -40,6 +42,7 @@ Returns all the information about a book given its id
 
 ### `/book/search`
 Returns all the information about a book given its full or partial title. Will Fetch Goodreads API
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -57,6 +60,7 @@ Returns all the information about a book given its full or partial title. Will F
 
 ### `/book/create`
 Adds a new book to the offers database, using its goodreads_id, genre and expires
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -73,6 +77,7 @@ Adds a new book to the offers database, using its goodreads_id, genre and expire
 
 ### `/search`
 Searches books in the database, using multiple filters as `authors`, `genres`,`location`
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
