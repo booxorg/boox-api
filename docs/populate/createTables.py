@@ -25,7 +25,6 @@ cursor.execute(query)
 query = """DROP TABLE IF EXISTS NOTIFICATIONS;"""
 cursor.execute(query)
 
-
 query = """CREATE TABLE USERS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   USERNAME VARCHAR(20),
@@ -105,6 +104,20 @@ query = """CREATE TABLE EXCHANGES (
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 
+query = """CREATE TABLE BOOKS (
+		   ID INT NOT NULL AUTO_INCREMENT,
+		   GOODREADSID INT,
+		   ISBN VARCHAR(13),
+		   TITLE VARCHAR(100),
+		   GENRE VARCHAR(10),
+		   EXPIRES DATE,
+		   AUTHORID INT,
+		   COVER VARCHAR(100),
+		   DELETED BOOLEAN,
+		   PRIMARY KEY(ID));"""
+
+cursor.execute(query)
+
 
 query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
 		   VALUES(1111111111111, "Abstract bombs", "SCI-FI", "2018-10-20", 1, 0)"""
@@ -155,18 +168,6 @@ query = """CREATE TABLE HISTORY (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   USERID INT,
 		   BOOKID INT,
-		   PRIMARY KEY(ID));"""
-cursor.execute(query)
-
-
-query = """CREATE TABLE EXCHANGES (
-		   ID INT NOT NULL AUTO_INCREMENT,
-		   OWNERID INT,
-		   RECEIVERID INT,
-		   BOOKID INT,
-		   EXCHANGEDATE DATE,
-		   ISFINISHED BOOLEAN,
-		   HASSUCCEEDED BOOLEAN,
 		   PRIMARY KEY(ID));"""
 cursor.execute(query)
 
