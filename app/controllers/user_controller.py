@@ -261,3 +261,39 @@ def user_edit(variables={}, request={}):
         'response' : result    
     })
 
+
+@Routing.Route(url='/user/books', method = 'GET', middleware=[
+    TokenCheck.token_valid, 
+    Params.has_params('token', 'user', 'exchange_id')
+])
+def get_user_books(variables={}, request={}):
+    status = 'success'
+    message = ''
+
+    user_id = request.params.get('user', '')
+    exchange_id = request.params.get('exchange_id', '')
+    token = request.params.get('token', '')       
+
+    result = None
+    try:
+        books_query = Book.Book().query('ID').join('USERBOOKS', 'ID', 'BOOKID').where('USERBOOKS.USERID', '=', user_id).get()
+        books = [ BookController.get_book_by_id(book['ID']) for book in books_query ]
+        result = books
+    except UserWarning, e:
+        logging.exception('User warning')
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : str(e)   
+        })
+    except Exception, e:
+        logging.exception('Fatal error')
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : 'fatal error occured'   
+        })
+
+    return Controller.response_json({
+        'status' : 'success',
+        'message' : 'pull successful',
+        'response' : result    
+    })

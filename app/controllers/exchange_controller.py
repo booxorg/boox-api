@@ -67,12 +67,13 @@ def list_offers(variables={}, request={}):
 					where("EXCHANGES.OWNERID", "=", user_dict[0]['USERID']). \
 					condition("OR", "EXCHANGES.RECEIVERID", "=", user_dict[0]['USERID']).get()
 
+	result = None
 	if not exchange_dict:
-		status = 'succes'
+		status = 'success'
 		message = 'no entries found'
 		result = { 'status' : status, 'message' : message}
 	else:
-		status = 'succes'
+		status = 'success'
 		message = 'entries found'
 		response = exchange_dict
 
@@ -143,7 +144,7 @@ def decline_proposition(variables={}, request={}):
 
 @Routing.Route(url='/exchange/match-book', method='GET', middleware=[TokenCheck.token_valid, Params.has_params('token', 'receiverid', 'bookid1', 'bookid2')])
 def match_book(variables={}, request={}):
-	status = 'succes'
+	status = 'success'
 	message = ''
 
 	token = request.params['token']
