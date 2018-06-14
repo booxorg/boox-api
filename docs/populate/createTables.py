@@ -16,15 +16,14 @@ query = """DROP TABLE IF EXISTS AUTHORS;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS USERBOOKS;"""
 cursor.execute(query)
+query = """DROP TABLE IF EXISTS COVERS;"""
+cursor.execute(query)
 query = """DROP TABLE IF EXISTS HISTORY;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS EXCHANGES;"""
 cursor.execute(query)
 query = """DROP TABLE IF EXISTS TOKENS;"""
 cursor.execute(query)
-query = """DROP TABLE IF EXISTS NOTIFICATIONS;"""
-cursor.execute(query)
-
 
 query = """CREATE TABLE USERS (
 		   ID INT NOT NULL AUTO_INCREMENT,
@@ -59,18 +58,20 @@ query = """CREATE TABLE LOCATIONS (
 		   USERID INT,
 		   COUNTRY VARCHAR(100),
 		   CITY VARCHAR(100),
+		   VILLAGE VARCHAR(100),
 		   STREET VARCHAR(100),
+		   STREETNUMBER VARCHAR(10),
 		   PRIMARY KEY(ID));"""
 
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (1, "Romania", "Iasi", "Musatini")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (1, "Romania", "Iasi", "", "Musatini", "55")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (2, "Romania", "Iasi", "Plaiesilor")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (2, "Romania", "Iasi", "", "Plaiesilor", "55")"""
 cursor.execute(query)
 
-query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, STREET) VALUES (3, "Romania", "Iasi", "Stejar")"""
+query = """INSERT INTO LOCATIONS(USERID, COUNTRY, CITY, VILLAGE, STREET, STREETNUMBER) VALUES (3, "Romania", "Iasi", "", "Stejar", "41")"""
 cursor.execute(query)
 
 
@@ -95,28 +96,27 @@ cursor.execute(query)
 
 query = """CREATE TABLE BOOKS (
 		   ID INT NOT NULL AUTO_INCREMENT,
-		   GOODREADSID INT,
 		   ISBN VARCHAR(13),
-		   TITLE VARCHAR(100),
+		   TITLE VARCHAR(30),
 		   GENRE VARCHAR(10),
 		   EXPIRES DATE,
 		   AUTHORID INT,
-		   COVER VARCHAR(100),
+		   COVERID INT,
 		   DELETED BOOLEAN,
 		   PRIMARY KEY(ID));"""
 
 cursor.execute(query)
 
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
-		   VALUES(1111111111111, "Abstract bombs", "SCI-FI", "2018-10-20", 1, 0)"""
+query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, COVERID, DELETED)
+		   VALUES(1111111111111, "Abstract bombs", "SCI-FI", "2018-10-20", 1, 1, 0)"""
 cursor.execute(query)
 
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
-		   VALUES(2222222222222, "Do you even lift, bro?", "FITNESS", "2018-10-21", 2, 0)"""
+query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, COVERID, DELETED)
+		   VALUES(2222222222222, "Do you even lift, bro?", "FITNESS", "2018-10-21", 2, 2, 0)"""
 cursor.execute(query)
 
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
-		   VALUES(3333333333333, "How to treat gurls", "LIFESTYLE", "2018-10-23", 3, 0)"""
+query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, COVERID, DELETED)
+		   VALUES(3333333333333, "How to treat gurls", "LIFESTYLE", "2018-10-23", 3, 3, 0)"""
 cursor.execute(query)
 
 
@@ -152,6 +152,13 @@ cursor.execute(query)
 query = """INSERT INTO USERBOOKS(BOOKID, USERID) VALUES (3, 3)"""
 cursor.execute(query)
 
+query = """CREATE TABLE COVERS (
+		   ID INT NOT NULL AUTO_INCREMENT,
+		   COVER MEDIUMBLOB,
+		   PRIMARY KEY(ID));"""
+cursor.execute(query)
+
+
 query = """CREATE TABLE HISTORY (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   USERID INT,
@@ -164,7 +171,8 @@ query = """CREATE TABLE EXCHANGES (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   OWNERID INT,
 		   RECEIVERID INT,
-		   BOOKID INT,
+		   BOOKID1 INT,
+		   BOOKID2 INT,
 		   EXCHANGEDATE DATE,
 		   ISFINISHED BOOLEAN,
 		   HASSUCCEEDED BOOLEAN,
