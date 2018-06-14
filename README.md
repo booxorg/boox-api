@@ -124,6 +124,7 @@ Returns an array of `book` objects with the following format:
 
 ### `/register`
 Registers a new user with the given parameters
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | token | User identification token | String |
@@ -138,6 +139,7 @@ Doesn't return anything.
 
 ### `/login`
 Verifies user credentials and return an identification token
+
 | Parameter name | Description | Type |
 |----------------|-------------|------|
 | username | Username | String |
