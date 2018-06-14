@@ -87,6 +87,44 @@ def user_info(variables={}, request={}):
         'response' : user    
     })
 
+<<<<<<< HEAD
+@Routing.Route(
+    url='/getuserbytoken', 
+    method='GET',
+    middleware=[
+        Params.has_params('token')
+    ]
+)
+def get_user_by_token(variables={}, request={}):
+    status = 'success'
+    message = ''
+
+    token = request
+
+    user_dict = Token.Token().query("TOKENS.USERID").where("TOKENS.TOKEN", "=", request.params['token']).get()
+
+    if not user_dict:
+        status = 'error'
+        message = 'invalid token'
+    else:
+        status = 'success'
+        message = 'valid token'
+
+    
+    if user_dict:
+        response = { 'userid' : user_dict[0]['TOKENS.USERID'] }
+    else:
+        response = []
+
+    result = { 'status' : status, 'message' : message, 'response' : response}
+
+    return Controller.response_json(result)
+
+
+
+
+
+=======
 ###############################################################################################################
 @Routing.Route(url='/user/info', method = 'GET', middleware=[TokenCheck.token_valid, Params.has_params('token')])
 def user_info(variables={}, request={}):
@@ -201,3 +239,4 @@ def user_edit(variables={}, request={}):
     })
 
     
+>>>>>>> bfb115e301aed2d5d921381039be76c11f206648
