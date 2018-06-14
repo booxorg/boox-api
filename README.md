@@ -13,11 +13,11 @@ The API returns `JSON` objects as a response with the following format:
 Returns all the available and allowed Genres for adding books
 | Parameter name | Description | Type |
 |----------------|-------------|------|
-| None |
+| None | None | None |
 
 | Return value  | Description | Type |
-|----------------|-------------|------|
-| genres | Contains a list of strings naming all the allowed Genres | List of strings
+|---------------|-------------|------|
+| genres | Contains a list of strings naming all the allowed Genres | List of strings |
 
 ### `/book`
 Returns all the information about a book given its id
