@@ -79,3 +79,39 @@ def search(variables={}, request={}):
         'response' : result    
     })
 
+
+@Routing.Route(
+    url='/recommended',
+    method='GET',
+    middleware=[
+        TokenCheck.token_valid, 
+        Params.has_params('token')
+    ]
+)
+def recommended(variables={}, request={}):
+    result = []
+    try:
+        search_results = Book.Book().query('ID').get();
+        logging.debug(search_results)
+        for search_result in search_results[:10]:
+            book = BookController.get_book_by_id(search_result['ID'])
+            result.append(book)
+
+    except UserWarning, e:
+        logging.exception('User warning')
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : str(e)   
+        })
+    except Exception, e:
+        logging.exception('Fatal error')
+        return Controller.response_json({
+            'status' :  'error',
+            'message' : 'fatal error occured'   
+        })
+
+    return Controller.response_json({
+        'status' : 'success',
+        'message' : 'search sucessful',
+        'response' : result    
+    })

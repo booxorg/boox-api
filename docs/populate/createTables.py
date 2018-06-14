@@ -119,19 +119,6 @@ query = """CREATE TABLE BOOKS (
 cursor.execute(query)
 
 
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
-		   VALUES(1111111111111, "Abstract bombs", "SCI-FI", "2018-10-20", 1, 0)"""
-cursor.execute(query)
-
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
-		   VALUES(2222222222222, "Do you even lift, bro?", "FITNESS", "2018-10-21", 2, 0)"""
-cursor.execute(query)
-
-query = """INSERT INTO BOOKS (ISBN, TITLE, GENRE, EXPIRES, AUTHORID, DELETED)
-		   VALUES(3333333333333, "How to treat gurls", "LIFESTYLE", "2018-10-23", 3, 0)"""
-cursor.execute(query)
-
-
 query = """CREATE TABLE AUTHORS (
 		   ID INT NOT NULL AUTO_INCREMENT,
 		   NAME VARCHAR(30),
