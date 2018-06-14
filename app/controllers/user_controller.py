@@ -11,6 +11,7 @@ import app.models.user_book as UserBook
 import app.models.location as Location
 import app.models.exchange as Exchange
 import app.models.token as Token
+import book_controller as BookController
 import MySQLdb
 from datetime import datetime
 import logging
@@ -39,28 +40,13 @@ def user_info(variables={}, request={}):
         found_user = found_user[0]
         book_count = UserBook.UserBook().count().where('USERID', '=', found_user['ID']).get()[0]
         books_query = Book.Book()\
-            .query('BOOKS.ID', 'BOOKS.GOODREADSID', 'BOOKS.ISBN', 'BOOKS.TITLE', 'BOOKS.GENRE', 
-            'BOOKS.EXPIRES', 'BOOKS.AUTHORID', 'BOOKS.COVER', 'BOOKS.DELETED', 'AUTHORS.NAME')\
-            .join('AUTHORS', 'AUTHORID', 'ID')\
+            .query('BOOKS.ID')\
             .join('USERBOOKS', 'ID', 'BOOKID')\
             .where('USERBOOKS.USERID', '=', found_user['ID']).get()
 
         books = []
         for book_result in books_query:
-            book = {}
-            book['user_id'] = found_user['ID']
-            book['username'] = found_user['USERNAME']
-            book['title'] = book_result['BOOKS.TITLE'].decode('cp1252')
-            book['goodreads_id'] = book_result['BOOKS.GOODREADSID']
-            book['id'] = book_result['BOOKS.ID']
-            book['isbn'] = book_result['BOOKS.ISBN'].decode('cp1252')
-            book['genre'] = book_result['BOOKS.GENRE'].decode('cp1252')
-            book['expires'] = book_result['BOOKS.EXPIRES'].strftime('%d-%m-%Y')
-            book['author'] = book_result['AUTHORS.NAME'].decode('cp1252')
-            if book_result['BOOKS.COVER']:
-                book['cover'] = book_result['BOOKS.COVER'].decode('cp1252')
-            else:
-                book['cover'] = ''
+            book = BookController.get_book_by_id(book_result['BOOKS.ID'])
             books.append(book)
 
         location = Location.Location().query('*').where('USERID', '=', found_user['ID']).get()
