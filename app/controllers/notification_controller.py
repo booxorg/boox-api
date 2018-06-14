@@ -22,7 +22,7 @@ def notify_users(token, bookname, bookid):
 	#bookid = request.params['bookid']
 
 	user_dict = Token.Token().query("USERID").where("TOKEN", "=", token).get()
-	owner_location_dict = Location.Location().query("COUNTRY", "CITY", "VILLAGE", "STREET", "STREETNUMBER"). \
+	owner_location_dict = Location.Location().query("COUNTRY", "CITY", "STREET"). \
 											where("USERID", "=", user_dict[0]['USERID']).get()
 
 	owncountry = owner_location_dict[0]['COUNTRY']

@@ -1,7 +1,7 @@
 import MySQLdb
 from operator import itemgetter
 import liteframework.application as App
-import re
+import re, logging
 
 class Model:
 	table_name = ""
@@ -88,6 +88,19 @@ class Model:
 			self.__query = '%s WHERE %s %s %s' % (self.__query, self.__column_escape(column_name), operator, str(value))
 		return self
 
+	def whereAll(self, values):
+		self.__query += 'WHERE ';
+		preps = []
+		for (name, operator, value) in values:
+			if(isinstance(value, basestring)):
+				preps.append('(%s %s "%s")' % (self.__column_escape(name), operator, value))
+			else:
+				preps.append('(%s %s %s)' % (self.__column_escape(name), operator, str(value)))
+
+		self.__query += 'AND'.join(preps)
+		return self
+			
+
 	#Adds an AND or OR condition to the query
 	def condition(self, condition_type, column_name, operator, value):
 		if(isinstance(value, basestring)):
@@ -125,13 +138,12 @@ class Model:
 
 	def update_or_create(self, to_match, column_values):
 		self.query('*')
-		for (key, value) in to_match.iteritems():
-			self.where(key, '=', value)
+		self.whereAll([(key, '=', value) for (key, value) in to_match.iteritems()])
 		results = self.get()
 		if len(results) > 0:
 			self.update(column_values)
 			for (key, value) in to_match.iteritems():
-				self.where(key, '=', value)
+				self.whereAll([(key, '=', value) for (key, value) in to_match.iteritems()])
 			self.execute()
 			return self.__get_last_row()
 		else:

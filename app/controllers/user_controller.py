@@ -11,6 +11,7 @@ import app.models.user_book as UserBook
 import app.models.location as Location
 import app.models.exchange as Exchange
 import app.models.token as Token
+import app.models.preference as Preference
 import book_controller as BookController
 import MySQLdb
 from datetime import datetime
@@ -55,6 +56,12 @@ def user_info(variables={}, request={}):
         else:
             location = dict()
 
+        prefs = Preference.Preference().query('*').where('USERID', '=', found_user['ID']).get()
+        if prefs:
+            prefs = prefs[0]
+        else:
+            prefs = dict()
+
         user = {
             'id' : found_user['ID'],
             'username' : found_user['USERNAME'],
@@ -65,7 +72,8 @@ def user_info(variables={}, request={}):
             'street' : location.get('STREET', ''),
             'email' : found_user['EMAIL'],
             'book_count' : book_count['count'],
-            'books' : books
+            'books' : books,
+            'title_preference' : prefs.get('PREFERENCE', '')
         }
 
     except UserWarning, e:
@@ -139,6 +147,12 @@ def user_info(variables={}, request={}):
         else:
             locations = dict()
 
+        prefs = Preference.Preference().query('*').where('USERID', '=', user_id).get()
+        if prefs:
+            prefs = prefs[0]
+        else:
+            prefs = dict()
+
 
         result['firstname'] = user_query['USERS.FIRSTNAME']
         result['lastname'] = user_query['USERS.LASTNAME']
@@ -146,6 +160,7 @@ def user_info(variables={}, request={}):
         result['country'] = locations.get('LOCATIONS.COUNTRY', '')
         result['city'] = locations.get('LOCATIONS.CITY', '')
         result['street'] = locations.get('LOCATIONS.STREET', '')
+        result['title_preferences'] = prefs.get('PREFERENCE', '')
 
     except UserWarning, e:
         logging.exception('User warning')
@@ -182,7 +197,7 @@ def user_edit(variables={}, request={}):
     country = request.params.get('country', '')
     city = request.params.get('city', '')
     street = request.params.get('street', '')
-
+    title_prefs = request.params.get('title_preferences', '')
     result = None
     try:
         if not fname or not lname or not email:
@@ -191,6 +206,18 @@ def user_edit(variables={}, request={}):
 
         User.User().update({'FIRSTNAME' : fname, 'LASTNAME' : lname, 'EMAIL' : email}).where('ID', '=', user_id).execute()
         user = User.User().query('*').where('ID', '=', user_id).get()[0]
+
+        Preference.Preference().update_or_create(
+            {
+                'USERID' : user_id,
+                'PREFERENCETYPE': 'bookname'    
+            },
+            {
+                'USERID' : user_id,
+                'PREFERENCETYPE': 'bookname',
+                'PREFERENCE' : title_prefs
+            }
+        )
 
         if country or city or street:
             Location.Location().update_or_create(
@@ -230,7 +257,7 @@ def user_edit(variables={}, request={}):
 
     return Controller.response_json({
         'status' : 'success',
-        'message' : 'edit sucessful',
+        'message' : 'user sucessful',
         'response' : result    
     })
 
