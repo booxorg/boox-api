@@ -18,11 +18,11 @@ from datetime import datetime
     method='GET',
     middleware=[
         TokenCheck.token_valid, 
-        Params.has_params('token', 'keywords')
+        Params.has_params('token')
     ]
 )
 def search(variables={}, request={}):
-    keywords = request.params['keywords']
+    keywords = request.params.get('keywords', '.*')
     authors = request.params.get('authors', '.*')
     genres = request.params.get('genres', '.*')
     before = request.params.get('before', '-')
@@ -30,7 +30,7 @@ def search(variables={}, request={}):
     location = request.params.get('location', '-')
 
     ok, error_message = Validator.validate([
-        (keywords, r'^[a-zA-Z0-9, \'"+-=;?]+$', 'keywords value is invalid'),
+        (keywords, r'^\.\*|[a-zA-Z0-9,. \'"+-=;?]+$', 'keywords value is invalid'),
         (authors, r'^\.\*|[\w\'-, ]+$', 'authors value is invalid'),
         (genres, r'^\.\*|(%s)$' % ('|'.join(BookController.genres)), 'genres value is invalid'),
         (before, r'^\-|([1-9]|([012][0-9])|(3[01]))\-([0]{0,1}[1-9]|1[012])\-\d\d\d\d$', 'before value is invalid'),

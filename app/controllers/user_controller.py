@@ -87,7 +87,7 @@ def user_info(variables={}, request={}):
         'response' : user    
     })
 
-<<<<<<< HEAD
+
 @Routing.Route(
     url='/getuserbytoken', 
     method='GET',
@@ -121,10 +121,6 @@ def get_user_by_token(variables={}, request={}):
     return Controller.response_json(result)
 
 
-
-
-
-=======
 ###############################################################################################################
 @Routing.Route(url='/user/info', method = 'GET', middleware=[TokenCheck.token_valid, Params.has_params('token')])
 def user_info(variables={}, request={}):
@@ -238,5 +234,3 @@ def user_edit(variables={}, request={}):
         'response' : result    
     })
 
-    
->>>>>>> bfb115e301aed2d5d921381039be76c11f206648
