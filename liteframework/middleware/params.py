@@ -6,7 +6,7 @@ def has_params(*params):
         for param in params:
             if not param in request.params: 
                 result = {
-                    'status' : 'failed',
+                    'status' : 'error',
                     'message' : 'Parameter %s should be present' % (param)
                 }
                 return (False, Controller.response_json(result))
